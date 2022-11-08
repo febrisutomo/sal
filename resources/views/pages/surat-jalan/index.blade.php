@@ -64,11 +64,13 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $pengambilan->kitir->tanggal }}</td>
                                         <td>{{ $pengambilan->kitir->sa->sppbe->nama }}</td>
-                                        <td>{{ $pengambilan->kitir->no_sa }}</td>
+                                        <td>{{ $pengambilan->kitir->sa->no_sa }}</td>
                                         <td>{{ $pengambilan->armada->plat_nomor }}</td>
                                         <td>{{ $pengambilan->sopir->nama }}</td>
                                         <td>
                                             <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
+                                            <a href="{{ route('surat-jalan.show', $pengambilan->id)}}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
+                                            <a href="{{ route('surat-jalan.pdf', $pengambilan)}}" class="btn btn-sm btn-info"><i class="fas fa-file-pdf"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach

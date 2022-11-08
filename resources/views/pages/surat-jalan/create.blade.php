@@ -114,7 +114,8 @@
                                     <tr>
                                         <td class="no text-center" style="width: 30px">1</td>
                                         <td>
-                                            <select name="penyaluran[0][pangkalan_id]" class="form-control pangkalan"
+                                            <select name="penyaluran[0][pangkalan_id]"
+                                                class="form-control pangkalan select2" data-placeholder="Pilih Pangkalan"
                                                 onchange="reloadOption()" style="width: 100%" required>
                                                 <option value=""></option>
                                                 @foreach ($pangkalans as $pangkalan)
@@ -137,15 +138,14 @@
                                         </td>
                                         <td class="text-center" style="width:60px">
                                             <button type="button" class="btn btn-danger"
-                                                onclick="hapusPenyaluran(this)"><i class="fas fa-trash"></i></button>
+                                                onclick="deletePenyaluran(this)"><i class="fas fa-trash"></i></button>
                                         </td>
                                     </tr>
                                 </tbody>
                                 <tfoot id="tfoot">
                                     <tr>
                                         <td colspan="3">
-                                            <button type="button" class="btn btn-success"
-                                                onclick="tambahPenyaluran()"><i
+                                            <button type="button" class="btn btn-success" onclick="addPenyaluran()"><i
                                                     class="fas fa-plus mr-2"></i>Tambah</button>
                                         </td>
                                         <td id="totalBarang" class="text-right">
@@ -197,7 +197,7 @@
                                     <tr>
                                         <td class="no text-center">1</td>
                                         <td>
-                                            <input type="text" class="form-control seri" name="penukaran[0][seri]">
+                                            <input type="text" class="form-control no-seri" name="penukaran[0][no_seri]">
                                         </td>
                                         <td class="text-center">
                                             <input type="checkbox" name="penukaran[0][rincian][]" value="bocor-body">
@@ -223,14 +223,14 @@
 
                                         <td class="text-center" style="width:60px">
                                             <button type="button" class="btn btn-danger"
-                                                onclick="hapusPenukaran(this)"><i class="fas fa-trash"></i></button>
+                                                onclick="deletePenukaran(this)"><i class="fas fa-trash"></i></button>
                                         </td>
                                     </tr>
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <td colspan="100%">
-                                            <button type="button" class="btn btn-warning" onclick="tambahPenukaran()"><i
+                                            <button type="button" class="btn btn-warning" onclick="addPenukaran()"><i
                                                     class="fas fa-plus mr-2"></i>Tambah</button>
                                         </td>
                                     </tr>
@@ -251,7 +251,7 @@
 @push('script')
     <script>
         $(document).ready(function() {
-            getSA()
+
             $('#tanggal').daterangepicker({
                 singleDatePicker: true,
                 showDropdowns: true,
@@ -264,6 +264,12 @@
             $('.select2').select2({
                 allowClear: true
             })
+
+            $('#tanggal').on('apply.daterangepicker', function(ev, picker) {
+                console.log(picker.startDate.format('YYYY-MM-DD'));
+                getSA(picker.startDate.format('YYYY-MM-DD'))
+            });
+
         })
 
         function rp(num) {
@@ -275,34 +281,34 @@
 
         const harga = parseInt(document.querySelector('.harga').dataset.val)
 
-        function tambahPenyaluran() {
-            $('#tb_penyaluran tbody tr:first-child').find(".pangkalan").select2("destroy")
-            const clone = $('#tb_penyaluran tbody tr:first-child').clone(true)
+        function getSA(tanggal) {
 
-            clone.find(".pangkalan").val(null).select2({
-                placeholder: "Pilih Pangkalan",
-                allowClear: true
-            })
-            clone.find(".jumlah").val(0)
-            clone.find(".subtotal").text("Rp 0,00")
+            $('select[name=kitir_id]').attr('disabled', true)
+            $.ajax({
+                url: 'create/' + tanggal,
+                type: 'get',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        let options = `<option value=""></option>`
+                        $.each(response.data, function(key, value) {
+                            options +=
+                                `<option value="${value.id}" ${value.sisa_kuota <= 0 ? 'disabled' : ''} > ${value.sa.no_sa} (${value.sa.tipe}) - ${value.sa.sppbe.nama} (${value.sisa_kuota} dari ${value.kuota})  </option>`
+                        })
+                        $('select[name=kitir_id]').html(options)
 
-            $('#tb_penyaluran tbody').append(clone)
-            $('#tb_penyaluran tbody tr:first-child').find(".pangkalan").select2({
-                placeholder: "Pilih Pangkalan",
-                allowClear: true
+                    }
+                },
+                complete: function() {
+                    $('select[name=kitir_id]').attr('disabled', false)
+                }
             })
-            reloadOption()
-            hitungTotal()
         }
 
-        function hapusPenyaluran(e) {
-            if (e.closest("tbody").children.length > 1) {
-                e.parentElement.parentElement.remove()
-                hitungTotal()
-            }
-            reloadOption()
-        }
+        getSA()
 
+
+        // PENYALURAN 
         function validasiInput(e) {
             if (e.value == '' || e.value < e.min) {
                 e.value = 0
@@ -362,79 +368,46 @@
                     }
                 }
             });
-
         }
 
-        // function reloadOption () {
-        //     $selects = $("table").find("select");
-        //     if ($selects.length <= 1) return;
-        //     let selected = [];
+        function addPenyaluran() {
+            $('#tb_penyaluran tbody tr:first-child .pangkalan').select2('destroy')
+            const clone = $('#tb_penyaluran tbody tr:first-child').clone(true)
 
-        //     $selects.each(function(index, select) {
-        //         if (select.value !== "") {
-        //             selected.push(select.value);
-        //         }
-        //     });
-
-        //     $("table").find("option").prop("disabled", false);
-        //     for (var index in selected) {
-        //         $("table")
-        //             .find('option[value="' + selected[index] + '"]:not(:selected)')
-        //             .prop("disabled", true);
-        //     }
-        // };
-
-        $('#tanggal').on('apply.daterangepicker', function(ev, picker) {
-            console.log(picker.startDate.format('YYYY-MM-DD'));
-            getSA(picker.startDate.format('YYYY-MM-DD'))
-        });
-
-        function getSA(tanggal) {
-            // let tanggal = $('input[name=tanggal]').val()
-            // console.log($('input[name=tanggal]').val());
-            $('select[name=kitir_id]').attr('disabled', true)
-            $.ajax({
-                url: 'create/' + tanggal,
-                type: 'get',
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        let options = `<option value=""></option>`
-                        $.each(response.data, function(key, value) {
-                            options +=
-                                `<option value="${value.id}" ${value.sisa_kuota <= 0 ? 'disabled' : ''} > ${value.no_sa} (${value.sa.tipe}) - ${value.sa.sppbe.nama} (${value.sisa_kuota} dari ${value.kuota})  </option>`
-                        })
-                        $('select[name=kitir_id]').html(options)
-
-                    }
-                },
-                complete: function() {
-                    $('select[name=kitir_id]').attr('disabled', false)
-                }
+            clone.find(".pangkalan").val(null).select2({
+                placeholder: "Pilih Pangkalan",
+                allowClear: true
             })
+
+            clone.find(".jumlah").val(0)
+            clone.find(".subtotal").text("Rp 0,00")
+
+            $('#tb_penyaluran tbody').append(clone)
+            $('#tb_penyaluran tbody tr:first-child .pangkalan').select2({
+                placeholder: "Pilih Pangkalan",
+                allowClear: true
+            })
+            reloadOption()
+            hitungTotal()
         }
 
-        function tambahPenukaran() {
-            const clone = document.querySelector("#tb_penukaran tbody tr:first-child").cloneNode(true)
-            document.querySelector("#tb_penukaran tbody").appendChild(clone)
-            reindexPenukaran()
-        }
-
-        function hapusPenukaran(e) {
-            if (e.closest("tbody").children.length > 1) {
-                e.parentElement.parentElement.remove()
+        function deletePenyaluran(el) {
+            if (el.closest("tbody").children.length > 1) {
+                el.closest('tr').remove()
+                hitungTotal()
+                reloadOption()
             }
-            reindexPenukaran()
         }
 
+        // PENUKARAN 
         function reindexPenukaran() {
             const trs = document.querySelectorAll("#tb_penukaran tbody tr")
 
             trs.forEach((tr, index) => {
-                const seri = tr.querySelector(".seri")
-                const name = seri.getAttribute('name').replace(/[0-9]/g, index)
+                const no_seri = tr.querySelector(".no-seri")
+                const name = no_seri.getAttribute('name').replace(/[0-9]/g, index)
                 tr.querySelector(".no").innerText = index + 1
-                seri.setAttribute('name', name)
+                no_seri.setAttribute('name', name)
 
                 const cbs = tr.querySelectorAll("input[type=checkbox]")
                 cbs.forEach(cb => {
@@ -444,6 +417,24 @@
 
 
             });
+        }
+
+        function addPenukaran() {
+            const clone = $('#tb_penukaran tbody tr:first-child').clone(true)
+            clone.find('.no-seri').val('')
+            const cbs = clone.find('input[type=checkbox]')
+            cbs.each(function(){
+                $(this).prop('checked', false);
+            })
+            $("#tb_penukaran tbody").append(clone)
+            reindexPenukaran()
+        }
+
+        function deletePenukaran(el) {
+            if (el.closest("tbody").children.length > 1) {
+                el.closest('tr').remove()
+            }
+            reindexPenukaran()
         }
     </script>
 @endpush

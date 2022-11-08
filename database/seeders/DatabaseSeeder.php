@@ -76,7 +76,7 @@ class DatabaseSeeder extends Seeder
         $sas = [];
         for ($i=1; $i <= 4; $i++) { 
            $sas[] = [
-                'no_sa' => 1059400 + $i,
+                'no_sa' => 105910 + $i,
                 'bulan_tahun' => Carbon::create(2022, 10, 1),
                 'tipe' => 'reguler',
                 'sppbe_id' => $i,
@@ -91,7 +91,7 @@ class DatabaseSeeder extends Seeder
             $kuota = collect([560, 1120])->random();
             $kitirs[] = [
                 'tanggal' => Carbon::create(2022, 10, 1),
-                'no_sa' => 1059400 + $i,
+                'sa_id' => $i,
                 'kuota' => $kuota,
                 'sisa_kuota' => $kuota,
             ];

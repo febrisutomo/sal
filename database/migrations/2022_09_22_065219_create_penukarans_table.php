@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('penukarans', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('pengambilan_id')->constrained()->cascadeOnDelete();
+            $table->string('no_seri');
+            $table->json('rincian');
             $table->timestamps();
         });
     }

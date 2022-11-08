@@ -13,4 +13,5 @@ class PangkalanPenyaluran extends Pivot
     {
         return $this->attributes['harga'] * $this->attributes['kuantitas'];
     }
+
 }

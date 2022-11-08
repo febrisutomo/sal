@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Kitir;
 use App\Models\Sopir;
 use App\Models\Armada;
-use App\Models\Penyaluran;
+use App\Models\Pangkalan;
+use App\Models\Penukaran;
+use App\Models\PangkalanPenyaluran;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -33,8 +36,17 @@ class Pengambilan extends Model
         return $this->belongsTo(Kitir::class);
     }
 
-    public function penyaluran()
+    public function penyalurans()
     {
-        return $this->hasOne(Penyaluran::class);
+        return $this->belongsToMany(Pangkalan::class, 'pangkalan_penyalurans')
+            ->using(PangkalanPenyaluran::class)
+            ->withTimestamps()
+            ->withPivot('harga', 'kuantitas')
+            ->withTrashed();
+    }
+
+    public function penukarans()
+    {
+        return $this->hasMany(Penukaran::class);
     }
 }

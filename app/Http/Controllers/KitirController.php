@@ -7,9 +7,16 @@ use Carbon\Carbon;
 use App\Models\Kitir;
 use App\Models\Sppbe;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class KitirController extends Controller
 {
+
+    private $currentDay = 0;
+    private $currentMonth = 0;
+    private $currentYear = 0;
+    private $daysInMonth = 0;
+
     /**
      * Display a listing of the resource.
      *
@@ -17,19 +24,117 @@ class KitirController extends Controller
      */
     public function index(Request $request)
     {
-        $date = $request->month ?? Date("Y-m");
-        $data = [
-            'month' => $date,
-            'sppbes' => Sppbe::orderBy('nama')->get(),
-            'sas' => Sa::with('sppbe')->whereYear('bulan_tahun', Carbon::create($date)->month)
-                ->whereMonth('bulan_tahun', Carbon::create($date)->year)->get(),
-            'kitirs' => Kitir::with('sa.sppbe')->whereYear('tanggal', Carbon::create($date)->month)
-                ->whereMonth('tanggal', Carbon::create($date)->year)->get(),
 
+
+        $bulan = $request->bulan ?? date("Y-m");
+
+        $dates = [];
+
+        $year =  date("Y", strtotime($bulan));
+        $month = date("m", strtotime($bulan));
+
+        $this->currentYear = $year;
+
+        $this->currentMonth = $month;
+
+        $this->daysInMonth = $this->_daysInMonth($month, $year);
+
+        $weeksInMonth = $this->_weeksInMonth($month, $year);
+        // Create weeks in a month
+        for ($i = 0; $i < $weeksInMonth; $i++) {
+
+            //Create days in a week
+            for ($j = 0; $j < 7; $j++) {
+                $dates[$i][$j] = $this->_showDay($i * 7 + $j);
+            }
+        }
+
+        $data = [
+            'bulan' => $bulan,
+            'sppbes' => Sppbe::with('sas')->orderBy('nama')->get(),
+            'sas' => Sa::with('sppbe', 'kitirs')->whereYear('bulan_tahun', Carbon::create($bulan)->year)
+                ->whereMonth('bulan_tahun', Carbon::create($bulan)->month)->get(),
+            'kitirs' => Kitir::with('sa.sppbe')->whereYear('tanggal', Carbon::create($bulan)->year)
+                ->whereMonth('tanggal', Carbon::create($bulan)->month)->get(),
+            'dates' => $dates,
         ];
-        // dd(Carbon::create($date)->year);
-        dd($data);
+
+        // dd($data['sas']);
+
+
+        // dd($data['kitirs']->where('tanggal', $date.'-01')->where('sa.sppbe_id', 1));
         return view('pages/kitir/create', $data);
+    }
+
+    private function _showDay($cellNumber)
+    {
+
+        if ($this->currentDay == 0) {
+
+            $firstDayOfTheWeek = date('N', strtotime($this->currentYear . '-' . $this->currentMonth . '-01'));
+
+            if (intval($cellNumber) == intval($firstDayOfTheWeek)) {
+
+                $this->currentDay = 1;
+            }
+        }
+
+        if (($this->currentDay != 0) && ($this->currentDay <= $this->daysInMonth)) {
+
+            $this->currentDate = date('Y-m-d', strtotime($this->currentYear . '-' . $this->currentMonth . '-' . ($this->currentDay)));
+
+            $cellContent = $this->currentDay;
+
+            $this->currentDay++;
+        } else {
+
+            $this->currentDate = null;
+
+            $cellContent = null;
+        }
+
+
+        return $cellContent;
+    }
+
+    private function _weeksInMonth($month = null, $year = null)
+    {
+
+        if (null == ($year)) {
+            $year =  date("Y", time());
+        }
+
+        if (null == ($month)) {
+            $month = date("m", time());
+        }
+
+        // find number of days in this month
+        $daysInMonths = $this->_daysInMonth($month, $year);
+
+        $numOfweeks = ($daysInMonths % 7 == 0 ? 0 : 1) + intval($daysInMonths / 7);
+
+        $monthEndingDay = date('N', strtotime($year . '-' . $month . '-' . $daysInMonths));
+
+        $monthStartDay = date('N', strtotime($year . '-' . $month . '-01'));
+
+        if ($monthEndingDay < $monthStartDay) {
+
+            $numOfweeks++;
+        }
+
+        return $numOfweeks;
+    }
+
+    private function _daysInMonth($month = null, $year = null)
+    {
+
+        if (null == ($year))
+            $year =  date("Y", time());
+
+        if (null == ($month))
+            $month = date("m", time());
+
+        return date('t', strtotime($year . '-' . $month . '-01'));
     }
 
 
@@ -60,20 +165,20 @@ class KitirController extends Controller
         // dd($request->all());
         $validated = $request->validate([
             'tanggal' => 'required',
-            'sppbe_id' => 'required',
-            'no_sa' => 'required',
+            'sa_id' => 'required',
             'kuota' => 'required',
-            'tipe' => 'required',
         ]);
 
         $validated['sisa_kuota'] = $validated['kuota'];
-        $kitir = Kitir::create($validated);
+        Kitir::create($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Data berhasil ditambahkan!',
-            'data' => $kitir->load('sppbe'),
+            'message' => 'Kuota berhasil ditambahkan!',
         ]);
+
+        // dd($request->data);
+
     }
 
     /**
@@ -107,20 +212,15 @@ class KitirController extends Controller
      */
     public function update(Request $request, Kitir $kitir)
     {
-        $validated = $request->validate([
-            'tanggal' => 'required',
-            'sppbe_id' => 'required',
-            'no_sa' => 'required',
+        $request->validate([
             'kuota' => 'required',
-            'tipe' => 'required',
         ]);
 
-        $kitir->update($validated);
+        $kitir->update(['kuota' => $request->kuota]);
 
         return response()->json([
-            'sucess' => true,
-            'message' => 'Data berhasil diupdate!',
-            'data' => Kitir::find($kitir->id)->load('sppbe')
+            'success' => true,
+            'message' => 'Kuota berhasil diubah!',
         ]);
     }
 
@@ -136,7 +236,7 @@ class KitirController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Data berhasil dihapus!'
+            'message' => 'Kuota berhasil dihapus!'
         ]);
     }
 

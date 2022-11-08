@@ -11,10 +11,8 @@ class Sa extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'no_sa';
-    public $incrementing = false;
-
     protected $fillable = [
+        'id',
         'no_sa',
         'sppbe_id',
         'bulan_tahun',
@@ -29,5 +27,10 @@ class Sa extends Model
     public function sppbe()
     {
         return $this->belongsTo(Sppbe::class);
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->kitirs()->sum('kuota');
     }
 }

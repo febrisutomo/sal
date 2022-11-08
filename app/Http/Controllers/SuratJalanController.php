@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kitir;
 use App\Models\Sopir;
 use App\Models\Armada;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use App\Models\Pangkalan;
 use App\Models\Pengambilan;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class SuratJalanController extends Controller
     public function index()
     {
         $data = [
-            'pengambilans' => Pengambilan::with('kitir.sa', 'armada', 'penyaluran', )->get()
+            'pengambilans' => Pengambilan::with('kitir.sa', 'armada', 'penyalurans',)->get()
         ];
         // dd($data);
         return view('pages/surat-jalan/index', $data);
@@ -36,7 +37,7 @@ class SuratJalanController extends Controller
             'armadas' => Armada::all(),
             'sopirs' => Sopir::all(),
             'pangkalans' => Pangkalan::orderBy('nama')->get(),
-            'kitirs' => Kitir::with( 'sa.sppbe')->where('tanggal', date('Y-m-d'))->get(),
+            'kitirs' => Kitir::with('sa.sppbe')->where('tanggal', date('Y-m-d'))->get(),
         ];
 
         return view('pages/surat-jalan/create', $data);
@@ -60,7 +61,7 @@ class SuratJalanController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        // dd($request->penukaran);
 
         $validated = $request->validate(
             [
@@ -75,17 +76,27 @@ class SuratJalanController extends Controller
 
         $pengambilan->kitir()->decrement('sisa_kuota', 560);
 
-        $penyaluran = $pengambilan->penyaluran()->create();
 
         foreach ($request->penyaluran as $data) {
-            $penyaluran->pangkalans()->attach($data['pangkalan_id'], [
+            $pengambilan->penyalurans()->attach($data['pangkalan_id'], [
                 'harga' => 14500,
                 'kuantitas' => $data['jumlah']
             ]);
         }
 
-        return to_route('surat-jalan.index');
+    
 
+        foreach ($request->penukaran as $data) {
+            $pengambilan->penukarans()->create(
+                [
+                    'no_seri' => $data['no_seri'],
+                    'rincian' => $data['rincian']
+                ] 
+            );
+        }
+
+
+        return to_route('surat-jalan.index');
 
         // dd("berhasil");
 
@@ -97,9 +108,13 @@ class SuratJalanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Pengambilan $pengambilan)
     {
-        //
+        $data = [
+            'pengambilan' => $pengambilan->load('kitir.sa.sppbe', 'armada', 'penyalurans'),
+        ];
+
+        return view('pages/surat-jalan/detail', $data);
     }
 
     /**
@@ -134,5 +149,20 @@ class SuratJalanController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function pdf(Pengambilan $pengambilan)
+    {
+        // dd($pengambilan);
+        $data = [
+            'pengambilan' => $pengambilan->load('kitir.sa.sppbe', 'armada', 'penyalurans'),
+        ];
+
+        // return view('pages/surat-jalan/pdf', $data);
+        
+        $pdf = PDF::loadView('pages/surat-jalan/pdf', $data);
+     
+        // return $pdf->download('surat-jalan-'.$pengambilan->id.'.pdf');
+        return $pdf->stream();
     }
 }

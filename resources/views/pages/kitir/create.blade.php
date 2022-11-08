@@ -5,12 +5,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Buat Kitir Bulanan</h1>
+                    <h1>Kitir Bulanan</h1>
                 </div>
                 <div class="col-sm-6 d-flex justify-content-end">
                     <form action="{{ route('kitir.index') }}">
-                        <input type="month" class="form-control" name="month" min="2020-01" max="2030-12"
-                            name="datepicker" id="datepicker" style="width: 200px" value="{{ $month }}" />
+                        <input type="month" class="form-control" name="bulan" min="2020-01" max="2030-12"
+                            name="datepicker" id="datepicker" style="width: 200px" value="{{ $bulan }}" />
                     </form>
                 </div>
             </div>
@@ -18,288 +18,338 @@
     </section>
     <section class="content">
         <div class="container-fluid pb-3">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">
-
-                            <h4 class="card-title card-sa">SA Oktober 2022</h4>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>No. SA</th>
-                                        <th>SPPBE</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>123456</td>
-                                        <td>KMSU</td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-                                                <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="100%">
-                                            <button class="btn btn-sm btn-primary">Tambah</button>
-
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                            {{-- @foreach ($sppbes as $sppbe)
-                                <div class="form-group">
-                                    <label>{{ $sppbe->kode }}</label>
-                                    <input type="text" class="form-control no-sa" name="{{ $sppbe->kode }}" readonly>
-                                </div>
-                            @endforeach --}}
-                        </div>
-                    </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title card-sa"></h4>
                 </div>
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body pt-0">
-                            <div id='calendar'></div>
-                        </div>
-                    </div>
+                <div class="card-body">
+                    @foreach ($dates as $weeks)
+                        @php
+                            $last = $loop->last;
+                        @endphp
+                        <table class="table table-bordered table-sm mb-3"
+                            style="width: fit-content">
+                            <thead>
+                                <tr>
+                                    <th class="bg-primary text-center" style="width: 40px">No.</th>
+                                    <th class="bg-primary text-center" style="width: 80px">SPPBE</th>
+                                    <th class="bg-primary text-center" style="width: 120px">No. SA</th>
+                                    @foreach ($weeks as $day)
+                                        <th class="text-center  {{ $day == null ? 'bg-secondary' : 'bg-primary' }} {{ $loop->first && $day != null ? 'bg-danger' : '' }} "
+                                            style="width: 80px;">{{ $day }}</th>
+                                    @endforeach
+                                    @if ($last)
+                                        <th class="bg-primary text-center" style="width: 80px">Total</th>
+                                    @endif
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($sppbes as $sppbe)
+                                    @php
+                                        $sa = $sas->where('sppbe_id', $sppbe->id)->sortBy('tipe');
+                                    @endphp
+                                    <tr data-sppbe='@json($sppbe)' data-sa='@json($sa->first())'
+                                        data-count="{{ $sa->count() }}">
+                                        <td rowspan="{{ $sa->count() ?: 1 }}" class="text-center"
+                                            style="vertical-align: middle">{{ $loop->iteration }}</td>
+                                        <td rowspan="{{ $sa->count() ?: 1 }}" class="text-center"
+                                            style="vertical-align: middle">
+                                            {{ $sppbe->kode }}</td>
+                                        <td class="text-center no-sa" style="cursor: pointer; position: relative;">
+                                            @if ($sa->count())
+                                                <div class="{{ $sa->first()->tipe == 'tambahan' ? 'text-danger' : '' }}">
+                                                    {{ $sa->first()->no_sa }}
+                                                </div>
+                                                <div class="btn-action">
+                                                    <button class="btn btn-sm btn-danger delete-sa d-block"
+                                                        title="hapus"><i class="fas fa-trash"></i></button>
+                                                    @if ($sa->count() == 1)
+                                                        <button class="btn btn-sm btn-primary add-sa d-block"
+                                                            title="tambah"><i class="fas fa-plus"></i></button>
+                                                    @endif
+                                                </div>
+                                            @endif
+
+                                        </td>
+                                        @foreach ($weeks as $day)
+                                            @php
+                                                $kitir = $sa
+                                                    ->first()
+                                                    ?->kitirs->where('tanggal', $bulan . '-' . str_pad($day, 2, '0', STR_PAD_LEFT))
+                                                    ->first();
+                                            @endphp
+                                            <td class="text-center  {{ $day == null ? 'bg-light' : '' }} {{ $day != null && $loop->iteration != 1 ? 'kuota' : '' }}"
+                                                style="width: 100px; position:relative; {{ $day != null && $loop->iteration != 1 ? 'cursor:pointer' : '' }}"
+                                                data-tanggal="{{ $bulan . '-' . $day }}"
+                                                data-kitir='@json($kitir)'>
+                                                {{ $kitir?->kuota }}
+                                                @if ($kitir)
+                                                    <div class="btn-action">
+                                                        <button class="btn btn-sm btn-danger delete-kuota" title="hapus"><i
+                                                                class="fas fa-trash"></i></button>
+                                                    </div>
+                                                @endif
+                                            </td>
+                                        @endforeach
+                                        @if ($last)
+                                            <td class="text-center subtotal">
+                                                {{ $kitirs->where('sa_id', $sa->first()?->id)->sum('kuota') }}</td>
+                                        @endif
+
+                                    </tr>
+                                    @if ($sa->count() > 1)
+                                        <tr data-sppbe='@json($sppbe)' data-sa='@json($sa->last())'
+                                            data-count="{{ $sa->count() }}">
+                                            <td class="text-center no-sa" style="cursor: pointer; position: relative;">
+                                                @if ($sa->count())
+                                                    <div
+                                                        class="{{ $sa->last()->tipe == 'tambahan' ? 'text-danger' : '' }}">
+                                                        {{ $sa->last()->no_sa }}
+                                                    </div>
+                                                    <div class="btn-action">
+                                                        <button class="btn btn-sm btn-danger delete-sa d-block"
+                                                            title="hapus"><i class="fas fa-trash"></i></button>
+                                                        @if ($sa->count() == 1)
+                                                            <button class="btn btn-sm btn-primary add-sa d-block"
+                                                                title="tambah"><i class="fas fa-plus"></i></button>
+                                                        @endif
+                                                    </div>
+                                                @endif
+
+                                            </td>
+                                            @foreach ($weeks as $day)
+                                                @php
+                                                    $kitir = $sa
+                                                        ->last()
+                                                        ?->kitirs->where('tanggal', $bulan . '-' . str_pad($day, 2, '0', STR_PAD_LEFT))
+                                                        ->last();
+                                                @endphp
+                                                <td class="text-center  {{ $day == null ? 'bg-light' : '' }} {{ $day != null && $loop->iteration != 1 ? 'kuota' : '' }} "
+                                                    style="width: 100px; position:relative; {{ $day != null && $loop->iteration != 1 ? 'cursor:pointer' : '' }}"
+                                                    data-tanggal="{{ $bulan . '-' . $day }}"
+                                                    data-kitir='@json($kitir)'>
+                                                    {{ $kitir?->kuota }}
+                                                    @if ($kitir)
+                                                        <div class="btn-action">
+                                                            <button class="btn btn-sm btn-danger delete-kuota"
+                                                                title="hapus"><i class="fas fa-trash"></i></button>
+                                                        </div>
+                                                    @endif
+                                                </td>
+                                            @endforeach
+                                            @if ($last)
+                                                <td class="text-center">
+                                                    {{ $kitirs->where('sa_id', $sa->last()?->id)->sum('kuota') }}</td>
+                                            @endif
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3">
+                                    </td>
+                                    @foreach ($weeks as $day)
+                                        <td class="text-center {{ $day == null ? 'bg-light' : '' }}">
+                                            @if ($day != null && $loop->iteration != 1)
+                                                {{ $kitirs->where('tanggal', $bulan . '-' . str_pad($day, 2, '0', STR_PAD_LEFT))->sum('kuota') }}
+                                            @endif
+                                        </td>
+                                    @endforeach
+                                    @if ($last)
+                                        <th class="text-center total"></th>
+                                    @endif
+                                </tr>
+                            </tfoot>
+                        </table>
+                    @endforeach
+
+                    {{-- <table class="table table-bordered " style="width: fit-content">
+                        <thead>
+                            <tr>
+                                <th class="bg-primary text-center" style="width: 40px">No.</th>
+                                <th class="bg-primary text-center" style="width: 80px">SPPBE</th>
+                                <th class="bg-primary text-center" style="width: 80px">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($sppbes as $sppbe)
+                                <tr>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td class="text-center">{{ $sppbe->kode }}</td>
+                                    <td class="text-center">100</td>
+                                </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table> --}}
+
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="modal fade" id="modal-sa">
-        <div class="modal-dialog">
+    <div class="modal fade" id="modalNoSA" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Tambah SA</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <input name="id" type="hidden">
-                    <div class="form-group">
-                        <label for="tanggal">Tanggal</label>
-                        <input type="date" class="form-control" id="tanggal" name="tanggal">
+                <form action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">KMSU (10-2022)</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label for="sppbe_id">SPPBE</label>
-                        <select type="text" class="form-control" id="sppbe_id" name="sppbe_id">
-                            <option value="">Pilih SPBE</option>
-                            @foreach ($sppbes as $sppbe)
-                                <option value="{{ $sppbe->id }}">{{ $sppbe->nama }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    {{-- <div class="form-group">
-                        <label for="tipe">Tipe</label>
-                        <select class="form-control" name="tipe" id="tipe">
-                            <option value="reguler">Reguler</option>
-                            <option value="tambahan">Tambahan</option>
-                        </select>
-                    </div> --}}
-                    <div class="form-group">
-                        <label for="no_sa">No. SA</label>
-                        <select type="text" class="form-control" id="no_sa" name="no_sa">
-                        </select>
-                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>No. SA <span class="text-capitalize">reguler</span></label>
+                            <input type="number" class="form-control" name="no_sa" placeholder="No. SA" required>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="kuota">Kuota</label>
-                        <input type="text" class="form-control" id="kuota" name="kuota">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary btn-save">Simpan</button>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer justify-content-end">
-                    <button type="button" class="btn btn-danger btn-delete" hidden>Hapus</button>
-                    <button type="button" class="btn btn-primary btn-update" hidden>Update</button>
-                    <button type="button" class="btn btn-primary btn-store">Tambahkan</button>
-                </div>
+                </form>
             </div>
-
         </div>
-
     </div>
-    @endsection @push('script')
+
+    <div class="modal fade" id="modalKuota" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <form action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">KMSU (10-2022)</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Kuota <span class="text-capitalize">reguler</span></label>
+                            <input type="number" class="form-control" name="kuota" placeholder="Kuota" required>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary btn-save">Simpan</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection
+@push('script')
     <script>
         $(document).ready(function() {
-
-            // $('.edit-sa').on('click', function() {
-            //     var bol = $('.no-sa').attr('readonly')
-            //     $('.no-sa').attr('readonly', !bol)
-            //     $(this).text(bol ? 'Simpan' : 'Edit')
-            // })
-
-            $('input[name=month]').on('change', function() {
-                $(this).closest('form').submit()
-            })
-
 
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            const kitirs = @json($kitirs);
-            let events = []
-            kitirs.forEach(el => {
-                events.push({
-                    id: el.id,
-                    title: el.sa.sppbe.kode + ' (' + el.kuota + ')',
-                    start: new Date(el.tanggal).toLocaleDateString('en-CA'),
-                    color: el.sa.tipe == 'reguler' ? '#0073b7' : '#f56954',
-                    extendedProps: {
-                        sa: el.sa,
-                        kuota: el.kuota,
+
+            $('input[name=bulan]').on('change', function() {
+                $(this).closest('form').submit()
+            })
+
+            let bulan = $('input[name=bulan]').val()
+            bulan = new Date(bulan + '-01').toLocaleDateString('id-ID', {
+                year: 'numeric',
+                month: 'long'
+            })
+            $('.card-sa').text('SA ' + bulan)
+
+
+            $('.no-sa').on('click', function() {
+                let sa = $(this).parent().data('sa')
+                let sppbe = $(this).parent().data('sppbe')
+
+                $('#modalNoSA').modal('show')
+                $('#modalNoSA').data('sppbe', sppbe)
+                $('#modalNoSA .modal-title').text(sppbe.kode + ' (' + bulan + ')')
+                $('#modalNoSA').data('id', sa ? sa.id : '')
+                $('#modalNoSA label span').text(sa ? sa.tipe : 'reguler')
+                $('#modalNoSA input').val($(this).text().trim())
+
+            })
+
+
+            $('.add-sa').on('click', function(e) {
+                e.stopPropagation()
+
+                let sa = $(this).closest('tr').data('sa')
+                let sppbe = $(this).closest('tr').data('sppbe')
+
+                $('#modalNoSA').modal('show')
+                $('#modalNoSA').data('sppbe', sppbe)
+                $('#modalNoSA .modal-title').text(sppbe.kode +
+                    ' (' + $(
+                        'input[name=bulan]').val() + ' )')
+                if (sa.tipe == 'reguler') {
+                    $('#modalNoSA label span').text('tambahan')
+                } else {
+                    $('#modalNoSA label span').text('reguler')
+                }
+                $('#modalNoSA').data('id', '')
+                $('#modalNoSA input').val('')
+            })
+
+
+            $('#modalNoSA form').on('submit', function(e) {
+                e.preventDefault()
+
+                let id = $('#modalNoSA').data('id')
+                let url = 'sa/'
+                let type = 'POST'
+
+                if (id != '') {
+                    url += id
+                    type = 'PUT'
+                }
+
+                // console.log(data); 
+                $.ajax({
+                    url: url,
+                    type: type,
+                    data: {
+                        bulan_tahun: $('input[name=bulan').val() + '-01',
+                        sppbe_id: $('#modalNoSA').data('sppbe').id,
+                        no_sa: $('#modalNoSA input').val(),
+                        tipe: $('#modalNoSA label span').text(),
                     },
-                })
-            });
-            let calendarEl = document.getElementById('calendar');
-            let calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'id',
-                initialDate: '{{ $month }}',
-                themeSystem: 'bootstrap',
-                headerToolbar: {
-                    start: 'title', // will normally be on the left. if RTL, will be on the right
-                    center: '',
-                    end: '' // will normally be on the right. if RTL, will be on the left
-                },
-                showNonCurrentDates: false,
-                events: events,
+                    success: function(response) {
+                        $('#modalNoSA').modal('hide')
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function() {
+                            location.reload()
+                        })
 
-                eventClick: function(info) {
-                    let data = info.event.extendedProps;
-                    $('#modal-sa').modal('show')
-                    $('#modal-sa .modal-title').text('Ubah SA')
-                    $('#modal-sa .btn-delete').attr('hidden', false)
-                    $('#modal-sa .btn-update').attr('hidden', false)
-                    $('#modal-sa .btn-store').attr('hidden', true)
-                    $('input[name=id]').val(info.event.id)
-                    $('select[name=sppbe_id]').val(data.sa.sppbe.id)
-                    $('input[name=tanggal]').val(moment(info.event.start).format('YYYY-MM-DD'))
-                    $('input[name=kuota]').val(data.kuota)
-
-
-                    function getSA() {
-                        let tanggal = $('input[name=tanggal]').val()
-                        let id = $('select[name=sppbe_id]').val()
-                        $.ajax({
-                            url: 'kitir/get-sa/',
-                            type: 'POST',
-                            data: {
-                                sppbe_id: id,
-                                bulan: moment(tanggal).month() + 1,
-                                tahun: moment(tanggal).year(),
-                            },
-                            dataType: 'json',
-                            success: function(response) {
-                                if (response.success) {
-                                    let options = ``
-                                    $.each(response.data, function(key, value) {
-                                        options +=
-                                            `<option value="${value.no_sa}" > ${value.no_sa} (${value.tipe})</option>`
-                                    })
-                                    $('select[name=no_sa]').html(options)
-
-                                }
-                            },
+                    },
+                    error: function(jqXHR) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: jqXHR.responseJSON.message,
                         })
                     }
+                })
+            })
 
-                    getSA()
 
-                    $('select[name=sppbe_id]').on('change', function() {
-                        getSA()
-                    })
 
-                },
-
-                selectable: true,
-                select: function(info) {
-                    $('#modal-sa').modal('show')
-                    $('#modal-sa .modal-title').text('Tambah SA')
-                    $('#modal-sa .btn-delete').attr('hidden', true)
-                    $('#modal-sa .btn-update').attr('hidden', true)
-                    $('#modal-sa .btn-store').attr('hidden', false)
-                    $('input[name=id]').val(null)
-                    $('select[name=sppbe_id]').val(null)
-                    $('input[name=tanggal]').val(moment(info.start).format('YYYY-MM-DD'))
-                    $('input[name=no_sa]').val(null)
-                    $('select[name=tipe]').val('reguler')
-                    $('input[name=kuota]').val(null)
-
-                    $('.btn-store').on('click', function() {
-
-                        if ($(this).attr('disabled')) {
-                            return
-                        }
-
-                        $(this).attr('disabled', true).text('Processing...')
-                        $.ajax({
-                            url: "/kitir",
-                            type: "POST",
-                            data: {
-                                tanggal: $('input[name=tanggal]').val(),
-                                no_sa: $('input[name=no_sa]').val(),
-                                sppbe_id: $('select[name=sppbe_id]').val(),
-                                tipe: $('select[name=tipe]').val(),
-                                kuota: $('input[name=kuota]').val()
-                            }
-                        }).done(function(response) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: response.message,
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(function() {
-                                let data = response.data
-                                calendar.addEvent({
-                                    id: data.id,
-                                    title: data.sppbe.kode + ' (' + data
-                                        .kuota + ')',
-                                    start: new Date(data.tanggal)
-                                        .toLocaleDateString('en-CA'),
-                                    color: data.tipe == 'reguler' ?
-                                        '#0073b7' : '#f56954',
-                                    extendedProps: {
-                                        sppbe: data.sppbe,
-                                        no_sa: data.no_sa,
-                                        kuota: data.kuota,
-                                        tipe: data.tipe
-                                    },
-                                })
-                            })
-                        }).fail(function(jqXHR) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: jqXHR.responseJSON.message,
-                            }).then(function() {
-                                $('#modal-sa').modal('show')
-                            })
-                        }).always(function() {
-                            $('#modal-sa').modal('hide')
-                            $('.btn-store').attr('disabled', false).text(
-                                'Tambahkan')
-                        })
-                    })
-                }
-            });
-            calendar.render();
-
-            $('.btn-delete').on('click', function() {
+            $('.delete-sa').on('click', function(e) {
+                e.stopPropagation()
                 Swal.fire({
-                    title: 'Anda yakin?',
-                    text: "Anda tidak dapat mengembalikan ini!",
+                    title: 'Anda yakin ingin menghapus No. SA ini?',
+                    text: 'No. SA : ' + $(this).closest('tr').data('sa').no_sa,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -308,106 +358,140 @@
                     cancelButtonText: 'Batalkan'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        let id = $('input[name=id]').val()
+                        let id = $(this).closest('tr').data('sa').id
                         $.ajax({
-                            url: "/kitir/" + id,
+                            url: 'sa/' + id,
                             type: 'delete',
-                            data: {
-                                "id": id,
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: response.message,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(function() {
+                                    location.reload()
+                                })
                             }
-                        }).done(function(response) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: response.message,
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(function() {
-                                var event = calendar.getEventById(id)
-                                event.remove();
-                            })
-                        }).fail(function(jqXHR) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: jqXHR.responseJSON.message,
-                            }).then(function() {
-                                $('#modal-sa').modal('show')
-                            });
-                        }).always(function() {
-                            $('#modal-sa').modal('hide')
                         })
                     }
                 })
             })
 
-            $('.btn-update').on('click', function() {
-                $(this).attr('disabled', true).text('Processing...')
-                let id = $('input[name=id]').val()
+
+            // KUOTA
+
+            $('.kuota').on('click', function() {
+                let sa = $(this).parent().data('sa')
+                let sppbe = $(this).parent().data('sppbe')
+                let kitir = $(this).data('kitir')
+                let tanggal = $(this).data('tanggal')
+
+                if (sa) {
+                    $('#modalKuota').modal('show')
+                    $('#modalKuota').data('sa-id', sa.id)
+                    $('#modalKuota').data('id', kitir ? kitir.id : '')
+                    $('#modalKuota').data('tanggal', tanggal)
+                    $('#modalKuota .modal-title').text(sppbe.kode + ' (' + new Date(tanggal)
+                        .toLocaleDateString('id-ID', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        }) + ')')
+                    $('#modalKuota input').val($(this).text().trim())
+                    $('#modalKuota label span').text(sa.tipe)
+
+                } else {
+                    Swal.fire({
+                        title: 'Masukkan No. SA terlebih dahulu!',
+                        icon: 'warning',
+                    }).then((result) => {
+                        $('#modalNoSA').modal('show')
+                        $('#modalNoSA').data('sppbe', sppbe)
+                        $('#modalNoSA .modal-title').text(sppbe.kode + ' (' + bulan + ')')
+                        $('#modalNoSA').data('id', '')
+                        $('#modalNoSA label span').text('reguler')
+                        $('#modalNoSA input').val('')
+                    })
+
+                }
+            })
+
+            $('#modalKuota form').on('submit', function(e) {
+                e.preventDefault()
+
+                let id = $('#modalKuota').data('id')
+                let url = 'kitir/'
+                let type = 'POST'
+
+                if (id != '') {
+                    url += id
+                    type = 'PUT'
+                }
+
                 $.ajax({
-                    url: "/kitir/" + id,
-                    type: "PUT",
+                    url: url,
+                    type: type,
                     data: {
-                        tanggal: $('input[name=tanggal]').val(),
-                        no_sa: $('input[name=no_sa]').val(),
-                        sppbe_id: $('select[name=sppbe_id]').val(),
-                        tipe: $('select[name=tipe]').val(),
-                        kuota: $('input[name=kuota]').val()
-                    }
-                }).done(function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: response.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(function() {
-                        calendar.getEventById(id).remove()
-                        let data = response.data
-                        calendar.addEvent({
-                            id: data.id,
-                            title: data.sppbe.kode + ' (' + data
-                                .kuota + ')',
-                            start: new Date(data.tanggal)
-                                .toLocaleDateString('en-CA'),
-                            color: data.tipe == 'reguler' ?
-                                '#0073b7' : '#f56954',
-                            extendedProps: {
-                                sppbe: data.sppbe,
-                                no_sa: data.no_sa,
-                                kuota: data.kuota,
-                                tipe: data.tipe
-                            },
+                        sa_id: $('#modalKuota').data('sa-id'),
+                        kuota: $('#modalKuota input').val(),
+                        tanggal: $('#modalKuota').data('tanggal')
+                    },
+                    success: function(response) {
+                        $('#modalKuota').modal('hide')
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function() {
+                            location.reload()
                         })
-                    })
-                }).fail(function(jqXHR) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: jqXHR.responseJSON.message,
-                    }).then(function() {
-                        $('#modal-sa').modal('show')
-                    })
-                }).always(function() {
-                    $('.btn-update').attr('disabled', false).text(
-                        'Update')
-                    $('#modal-sa').modal('hide')
+
+                    },
+                    error: function(jqXHR) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: jqXHR.responseJSON.message,
+                        })
+                    }
                 })
+
             })
 
-            function syncCardTitle() {
-                $('.card-sa').text($('.fc-toolbar-title').text())
-            }
+            $('.delete-kuota').on('click', function(e) {
+                e.stopPropagation()
+                let id = $(this).parent().parent().data('kitir').id
+                $.ajax({
+                    url: 'kitir/' + id,
+                    type: 'delete',
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function() {
+                            location.reload()
+                        })
+                    }
+                })
 
-            syncCardTitle()
-            $('.fc-prev-button').on('click', function() {
-                syncCardTitle()
-            })
-            $('.fc-next-button').on('click', function() {
-                syncCardTitle()
+
             })
 
-        });
+           
+            let total = 0
+            $('.subtotal').each(function(){
+                total += parseInt(this.innerText)
+            })
+            $('.total').text(total)
+
+
+        })
     </script>
 @endpush
 
@@ -423,16 +507,29 @@
             -moz-appearance: textfield;
         }
 
-        .select2-results__options .select2-results__option[aria-disabled="true"] {
-            color: red;
+        /* th,
+                                                                td {
+                                                                    padding: 6px 12px !important;
+                                                                } */
+
+
+        .btn-action {
+            height: fit-content;
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto 0;
+            display: none;
         }
 
-        .fc-day-sun {
-            color: red
+        .kuota:hover .btn-action,
+        .no-sa:hover .btn-action {
+            display: block;
         }
 
-        .fc-header-toolbar.fc-toolbar {
-            margin-bottom: 0 !important;
+        .btn-sm {
+            font-size: 10px;
         }
     </style>
 @endpush

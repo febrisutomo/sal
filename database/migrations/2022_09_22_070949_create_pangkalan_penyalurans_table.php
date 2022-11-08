@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('pangkalan_penyalurans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('penyaluran_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('pengambilan_id')->constrained()->cascadeOnDelete();
             $table->foreignId('pangkalan_id')->constrained()->cascadeOnDelete();
             $table->integer('kuantitas');
             $table->integer('harga');

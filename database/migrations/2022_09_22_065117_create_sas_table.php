@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('sas', function (Blueprint $table) {
-            $table->unsignedBigInteger('no_sa');
-            $table->primary('no_sa');
+            $table->id();
+            $table->integer('no_sa');
             $table->foreignId('sppbe_id')->constrained()->cascadeOnDelete();
             $table->enum('tipe', ['reguler', 'tambahan']);
             $table->date('bulan_tahun');

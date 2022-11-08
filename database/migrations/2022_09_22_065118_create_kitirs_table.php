@@ -15,8 +15,7 @@ return new class extends Migration
     {
         Schema::create('kitirs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('no_sa');
-            $table->foreign('no_sa')->references('no_sa')->on('sas');
+            $table->foreignId('sa_id')->constrained()->cascadeOnDelete();
             $table->date('tanggal');
             $table->integer('kuota');
             $table->integer('sisa_kuota');

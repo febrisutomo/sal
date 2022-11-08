@@ -12,17 +12,16 @@ class Kitir extends Model
 
     protected $fillable = [
         'tanggal',
-        'no_sa',
+        'sa_id',
         'kuota',
         'sisa_kuota',
-        'jenis',
     ];
 
   
 
     public function sa()
     {
-        return $this->belongsTo(Sa::class, 'no_sa');
+        return $this->belongsTo(Sa::class);
     }
 
     // public function getTanggalAttribute()
