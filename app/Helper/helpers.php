@@ -6,24 +6,56 @@ function rupiah($angka)
 	return "Rp " . number_format($angka, 0, ',', '.');
 }
 
-function tanggal($tanggal)
+function tanggal($tanggal, $cetak_hari = false)
 {
-	$bulan = [
-		1 => 'Januari',
-		'Februari',
-		'Maret',
-		'April',
-		'Mei',
-		'Juni',
-		'Juli',
-		'Agustus',
-		'September',
-		'Oktober',
-		'November',
-		'Desember',
-	];
+	$tanggal = date('Y-m-j', strtotime($tanggal));
+	$hari = array ( 1 =>    'Senin',
+				'Selasa',
+				'Rabu',
+				'Kamis',
+				'Jumat',
+				'Sabtu',
+				'Minggu'
+			);
+			
+	$bulan = array (1 =>   'Januari',
+				'Februari',
+				'Maret',
+				'April',
+				'Mei',
+				'Juni',
+				'Juli',
+				'Agustus',
+				'September',
+				'Oktober',
+				'November',
+				'Desember'
+			);
+	$split 	  = explode('-', $tanggal);
+	$tgl = $split[2] . ' ' . $bulan[ (int)$split[1] ] . ' ' . $split[0];
+	
+	if ($cetak_hari) {
+		$num = date('N', strtotime($tanggal));
+		return $hari[$num] . ', ' . $tgl;
+	}
+	return $tgl;
+}
+function bulan($tanggal)
+{
+	$bulan = array (1 =>   'Januari',
+				'Februari',
+				'Maret',
+				'April',
+				'Mei',
+				'Juni',
+				'Juli',
+				'Agustus',
+				'September',
+				'Oktober',
+				'November',
+				'Desember'
+			);
+	$split 	  = explode('-', $tanggal);
 
-	$var = explode('-', $tanggal);
-
-	return $var[2] . ' ' . $bulan[(int) $var[1]] . ' ' . $var[0];
+	return $bulan[ (int)$split[1] ] . ' ' . $split[0];
 }

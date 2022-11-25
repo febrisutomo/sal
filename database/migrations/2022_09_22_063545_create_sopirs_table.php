@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('nama');
             $table->string('alamat');
             $table->timestamps();
+            $table->string('ttd');
+            $table->string('no_hp');
         });
     }
 

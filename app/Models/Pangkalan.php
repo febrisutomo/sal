@@ -11,4 +11,13 @@ class Pangkalan extends Model
     use HasFactory;
 
     use SoftDeletes;
+
+    protected $fillable = [
+        'no_reg',
+        'nama',
+        'alamat',
+        'no_hp',
+        'kuota',
+    ];
+    
 }

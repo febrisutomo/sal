@@ -14,7 +14,10 @@ class PangkalanController extends Controller
      */
     public function index()
     {
-        //
+        $data = [
+            'pangkalans' => Pangkalan::all()
+        ];
+        return view('pages.pangkalan.index', $data);
     }
 
     /**
@@ -24,7 +27,7 @@ class PangkalanController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.pangkalan.create');
     }
 
     /**
@@ -35,7 +38,17 @@ class PangkalanController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nama' => 'required',
+            'no_reg' => 'required|unique:pangkalans,no_reg',
+            'kuota' => 'required',
+            'no_hp' => 'required',
+            'alamat' => 'required',
+        ]);
+
+        Pangkalan::create($validated);
+
+        return to_route('pangkalan.index')->with('success', 'Pangkalan berhasil ditambahkan!');
     }
 
     /**
@@ -46,7 +59,7 @@ class PangkalanController extends Controller
      */
     public function show(Pangkalan $pangkalan)
     {
-        //
+        
     }
 
     /**
@@ -57,7 +70,11 @@ class PangkalanController extends Controller
      */
     public function edit(Pangkalan $pangkalan)
     {
-        //
+        $data = [
+            'pangkalan' => $pangkalan
+        ];
+
+        return view('pages.pangkalan.edit', $data);
     }
 
     /**
@@ -69,7 +86,17 @@ class PangkalanController extends Controller
      */
     public function update(Request $request, Pangkalan $pangkalan)
     {
-        //
+        $validated = $request->validate([
+            'nama' => 'required',
+            'no_reg' => 'required|unique:pangkalans,no_reg,'.$pangkalan->id,
+            'kuota' => 'required',
+            'no_hp' => 'required',
+            'alamat' => 'required',
+        ]);
+
+        $pangkalan->update($validated);
+
+        return to_route('pangkalan.index')->with('success', 'Pangkalan berhasil diubah!');
     }
 
     /**
@@ -80,6 +107,11 @@ class PangkalanController extends Controller
      */
     public function destroy(Pangkalan $pangkalan)
     {
-        //
+        $pangkalan->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pangkalan berhasil dihapus!'
+        ]);
     }
 }

@@ -19,6 +19,8 @@ class SopirFactory extends Factory
         return [
             'nama' => $this->faker->name(),
             'alamat' => $this->faker->address(),
+            'no_hp' => $this->faker->e164PhoneNumber(),
+            'ttd' => 'ttd.jpg'
         ];
     }
 }

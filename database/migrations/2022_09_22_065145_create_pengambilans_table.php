@@ -15,9 +15,10 @@ return new class extends Migration
     {
         Schema::create('pengambilans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('kitir_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('armada_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('kuota_harian_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('truk_id')->constrained()->cascadeOnDelete();
             $table->foreignId('sopir_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('kernet_id')->constrained()->cascadeOnDelete();
             $table->integer('jumlah')->default(560);
             $table->timestamps();
         });

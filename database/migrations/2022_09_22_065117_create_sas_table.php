@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('sas', function (Blueprint $table) {
             $table->id();
-            $table->integer('no_sa');
+            $table->string('no_sa');
+            $table->foreignId('kitir_id')->constrained()->cascadeOnDelete();
             $table->foreignId('sppbe_id')->constrained()->cascadeOnDelete();
             $table->enum('tipe', ['reguler', 'tambahan']);
-            $table->date('bulan_tahun');
             $table->timestamps();
         });
     }

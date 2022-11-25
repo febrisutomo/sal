@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-use App\Models\Kitir;
 use App\Models\Sopir;
-use App\Models\Armada;
+use App\Models\Truk;
+use App\Models\Kernet;
 use App\Models\Pangkalan;
 use App\Models\Penukaran;
+use App\Models\KuotaHarian;
 use App\Models\PangkalanPenyaluran;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Pengambilan extends Model
@@ -16,24 +18,30 @@ class Pengambilan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'kitir_id',
-        'armada_id',
+        'kuota_harian_id',
+        'truk_id',
         'sopir_id',
+        'kernet_id',
     ];
 
-    public function armada()
+    public function truk()
     {
-        return $this->belongsTo(Armada::class);
+        return $this->belongsTo(Truk::class);
     }
     
     public function sopir()
     {
         return $this->belongsTo(Sopir::class);
     }
-
-    public function kitir()
+    
+    public function kernet()
     {
-        return $this->belongsTo(Kitir::class);
+        return $this->belongsTo(Kernet::class);
+    }
+
+    public function kuotaHarian()
+    {
+        return $this->belongsTo(KuotaHarian::class);
     }
 
     public function penyalurans()
@@ -48,5 +56,13 @@ class Pengambilan extends Model
     public function penukarans()
     {
         return $this->hasMany(Penukaran::class);
+    }
+
+
+    public function totalPenyaluran(): Attribute
+    {
+        return new Attribute(
+            get: fn () => $this->penyalurans->sum('pivot.kuantitas'),
+        );
     }
 }

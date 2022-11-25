@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Kitir;
 use App\Models\Sppbe;
+use App\Models\KuotaHarian;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -13,15 +13,15 @@ class Sa extends Model
 
     protected $fillable = [
         'id',
+        'kitir_id',
         'no_sa',
         'sppbe_id',
-        'bulan_tahun',
         'tipe'
     ];
 
-    public function kitirs()
+    public function kuotaHarians()
     {
-        return $this->hasMany(Kitir::class);
+        return $this->hasMany(KuotaHarian::class);
     }
 
     public function sppbe()
@@ -31,6 +31,11 @@ class Sa extends Model
 
     public function getTotalAttribute()
     {
-        return $this->kitirs()->sum('kuota');
+        return $this->kuotaHarians()->sum('kuota');
+    }
+
+    public function kitir()
+    {
+        $this->belongsTo(Kitir::class);
     }
 }

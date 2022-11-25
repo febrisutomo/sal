@@ -14,7 +14,11 @@ class SppbeController extends Controller
      */
     public function index()
     {
-        //
+        $data = [
+            'sppbes' => Sppbe::all()
+        ];
+
+        return view('pages.sppbe.index', $data);
     }
 
     /**
@@ -24,7 +28,7 @@ class SppbeController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.sppbe.create');
     }
 
     /**
@@ -35,7 +39,19 @@ class SppbeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        $validated = $request->validate([
+            'nama' => 'required|unique:sppbes,nama',
+            'kode' => 'required|unique:sppbes,kode',
+            'no_sh' => 'required|unique:sppbes,no_sh',
+            'plant' => 'required|unique:sppbes,plant',
+            'alamat' => 'required',
+            'no_hp' => 'required',
+        ]);
+
+        Sppbe::create($validated);
+
+        return to_route('sppbe.index')->with('success', 'SP(P)BE berhasil ditambahkan!');
     }
 
     /**
@@ -57,7 +73,11 @@ class SppbeController extends Controller
      */
     public function edit(Sppbe $sppbe)
     {
-        //
+
+        $data = [
+            'sppbe' => $sppbe
+        ];
+        return view('pages.sppbe.edit', $data);
     }
 
     /**
@@ -69,7 +89,18 @@ class SppbeController extends Controller
      */
     public function update(Request $request, Sppbe $sppbe)
     {
-        //
+        $validated = $request->validate([
+            'nama' => 'required|unique:sppbes,nama,'.$sppbe->id,
+            'kode' => 'required|unique:sppbes,kode,'.$sppbe->id,
+            'no_sh' => 'required|unique:sppbes,no_sh,'.$sppbe->id,
+            'plant' => 'required|unique:sppbes,plant,'.$sppbe->id,
+            'alamat' => 'required',
+            'no_hp' => 'required',
+        ]);
+
+        $sppbe->update($validated);
+
+        return to_route('sppbe.index')->with('success', 'SP(P)BE berhasil diubah!');
     }
 
     /**
@@ -80,6 +111,11 @@ class SppbeController extends Controller
      */
     public function destroy(Sppbe $sppbe)
     {
-        //
+        $sppbe->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'SP(P)BE berhasil dihapus!'
+        ]);
     }
 }

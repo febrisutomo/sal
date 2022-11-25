@@ -8,8 +8,9 @@ use App\Models\Sa;
 use App\Models\User;
 use App\Models\Kitir;
 use App\Models\Sppbe;
-use App\Models\Armada;
+use App\Models\Truk;
 use App\Models\Pangkalan;
+use App\Models\KuotaHarian;
 use Faker\Factory as Faker;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
@@ -32,7 +33,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('123')
         ]);
 
-        Armada::factory()->count(4)->create();
+        Truk::factory()->count(4)->create();
 
         Pangkalan::factory()->count(60)->create();
 
@@ -73,30 +74,31 @@ class DatabaseSeeder extends Seeder
 
         Sppbe::insert($sppbes);
 
-        $sas = [];
-        for ($i=1; $i <= 4; $i++) { 
-           $sas[] = [
-                'no_sa' => 105910 + $i,
-                'bulan_tahun' => Carbon::create(2022, 10, 1),
+        $kitir = Kitir::create([
+            'bulan_tahun' => '2022-11',
+        ]);
+
+        for ($i = 1; $i <= 4; $i++) {
+            $kitir->sas()->create([
+                'no_sa' => 1122000 + ($i * 100),
                 'tipe' => 'reguler',
                 'sppbe_id' => $i,
-           ];
+            ]);
         }
 
-        Sa::insert($sas);
-        
 
-        $kitirs = [];
+
+        $kuota_harians = [];
         for ($i = 1; $i <= 4; $i++) {
             $kuota = collect([560, 1120])->random();
-            $kitirs[] = [
-                'tanggal' => Carbon::create(2022, 10, 1),
+            $kuota_harians[] = [
+                'tanggal' => Carbon::create(2022, 11, 1),
                 'sa_id' => $i,
                 'kuota' => $kuota,
                 'sisa_kuota' => $kuota,
             ];
         };
 
-        Kitir::insert($kitirs);
+        KuotaHarian::insert($kuota_harians);
     }
 }

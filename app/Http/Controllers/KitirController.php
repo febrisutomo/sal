@@ -2,69 +2,145 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sa;
 use Carbon\Carbon;
 use App\Models\Kitir;
 use App\Models\Sppbe;
+use App\Models\KuotaHarian;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class KitirController extends Controller
 {
-
     private $currentDay = 0;
     private $currentMonth = 0;
     private $currentYear = 0;
     private $daysInMonth = 0;
+
 
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
+    {
+        $data = [
+            'kitirs' => Kitir::orderBy('bulan_tahun', 'DESC')->get(),
+        ];
+        return view('pages/kitir/index', $data);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate(
+            [
+                'bulan_tahun' => 'required|unique:kitirs,bulan_tahun',
+            ],
+            [
+                'bulan_tahun.required' => 'Harap masukkan bulan dan tahun.',
+                'bulan_tahun.unique' => 'Bulan dan tahun sudah ada.'
+            ]
+        );
+
+        $kitir = Kitir::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kitir berhasil dibuat!',
+            'data' => $kitir
+        ]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Kitir  $kitir
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Kitir $kitir)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Kitir  $kitir
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Kitir $kitir)
     {
 
+        // dd($kitir->load('sas.kuotaHarians', 'sas.sppbe'));
+        $data = [
+            'kitir' => $kitir->load('sas.kuotaHarians', 'sas.sppbe'),
+            'sppbes' => Sppbe::with('sas')->orderBy('nama')->get(),
+            'dates' => $this->_calendar($kitir->bulan_tahun),
+        ];
+        return view('pages/kitir/edit', $data);
+    }
 
-        $bulan = $request->bulan ?? date("Y-m");
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Kitir  $kitir
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Kitir $kitir)
+    {
+        //
+    }
 
-        $dates = [];
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Kitir  $kitir
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Kitir $kitir)
+    {
+        $kitir->delete();
 
-        $year =  date("Y", strtotime($bulan));
-        $month = date("m", strtotime($bulan));
+        return response()->json([
+            'success' => true,
+            'message' => 'Kitir berhasil dihapus!'
+        ]);
+    }
 
-        $this->currentYear = $year;
-
-        $this->currentMonth = $month;
-
-        $this->daysInMonth = $this->_daysInMonth($month, $year);
-
-        $weeksInMonth = $this->_weeksInMonth($month, $year);
-        // Create weeks in a month
-        for ($i = 0; $i < $weeksInMonth; $i++) {
-
-            //Create days in a week
-            for ($j = 0; $j < 7; $j++) {
-                $dates[$i][$j] = $this->_showDay($i * 7 + $j);
-            }
-        }
+    public function print(Kitir $kitir)
+    {
 
         $data = [
-            'bulan' => $bulan,
-            'sppbes' => Sppbe::with('sas')->orderBy('nama')->get(),
-            'sas' => Sa::with('sppbe', 'kitirs')->whereYear('bulan_tahun', Carbon::create($bulan)->year)
-                ->whereMonth('bulan_tahun', Carbon::create($bulan)->month)->get(),
-            'kitirs' => Kitir::with('sa.sppbe')->whereYear('tanggal', Carbon::create($bulan)->year)
-                ->whereMonth('tanggal', Carbon::create($bulan)->month)->get(),
-            'dates' => $dates,
+            'kitir' => $kitir->load('sas.kuotaHarians', 'sas.sppbe'),
+            'sppbes' => Sppbe::with('sas.kuotaHarians')->whereRelation('sas', 'kitir_id', $kitir->id)->whereHas('sas')->orderBy('nama')->get(),
+            'dates' => $this->_calendar($kitir->bulan_tahun),
         ];
 
-        // dd($data['sas']);
+        $pdf = PDF::loadView('pages/kitir/print', $data);
 
+        $pdf->setPaper('A4', 'landscape');
 
-        // dd($data['kitirs']->where('tanggal', $date.'-01')->where('sa.sppbe_id', 1));
-        return view('pages/kitir/create', $data);
+        // return $pdf->download('surat-jalan-'.$pengambilan->id.'.pdf');
+        return $pdf->stream('kitir-' . date('Y-m', strtotime($kitir->bulanTahun.'-01')) . '.pdf');
     }
+
+    // generate calendar 
 
     private function _showDay($cellNumber)
     {
@@ -137,119 +213,28 @@ class KitirController extends Controller
         return date('t', strtotime($year . '-' . $month . '-01'));
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    private function _calendar($month_year)
     {
-        $data = [
-            'sppbes' => Sppbe::orderBy('nama')->get(),
-            'kitirs' => Kitir::with('sa.sppbe')->orderBy('tanggal')->get(),
+        $dates = [];
+        $year =  date("Y", strtotime($month_year));
+        $month = date("m", strtotime($month_year));
 
-        ];
-        // dd($data);
-        return view('pages/kitir/create', $data);
-    }
+        $this->currentYear = $year;
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        // dd($request->all());
-        $validated = $request->validate([
-            'tanggal' => 'required',
-            'sa_id' => 'required',
-            'kuota' => 'required',
-        ]);
+        $this->currentMonth = $month;
 
-        $validated['sisa_kuota'] = $validated['kuota'];
-        Kitir::create($validated);
+        $this->daysInMonth = $this->_daysInMonth($month, $year);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Kuota berhasil ditambahkan!',
-        ]);
+        $weeksInMonth = $this->_weeksInMonth($month, $year);
+        // Create weeks in a month
+        for ($i = 0; $i < $weeksInMonth; $i++) {
 
-        // dd($request->data);
+            //Create days in a week
+            for ($j = 0; $j < 7; $j++) {
+                $dates[$i][$j] = $this->_showDay($i * 7 + $j);
+            }
+        }
 
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Kitir  $kitir
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Kitir $kitir)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Kitir  $kitir
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Kitir $kitir)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Kitir  $kitir
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Kitir $kitir)
-    {
-        $request->validate([
-            'kuota' => 'required',
-        ]);
-
-        $kitir->update(['kuota' => $request->kuota]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Kuota berhasil diubah!',
-        ]);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Kitir  $kitir
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Kitir $kitir)
-    {
-        $kitir->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Kuota berhasil dihapus!'
-        ]);
-    }
-
-    public function getSA(Request $request)
-    {
-
-        $data = Sa::with('sppbe')->whereYear('bulan_tahun', $request->tahun)
-            ->whereMonth('bulan_tahun', $request->bulan)
-            ->where('sppbe_id', $request->sppbe_id)->get();
-        // dd($data);
-        return response()->json([
-            'success' => true,
-            'data' => $data
-        ]);
+        return $dates;
     }
 }

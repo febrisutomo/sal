@@ -4,28 +4,28 @@ namespace App\Models;
 
 use App\Models\Sa;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Kitir extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'tanggal',
-        'sa_id',
-        'kuota',
-        'sisa_kuota',
-    ];
+    protected $fillable = ['bulan_tahun'];
 
-  
-
-    public function sa()
+    public function getRouteKeyName()
     {
-        return $this->belongsTo(Sa::class);
+        return 'bulan_tahun';
     }
 
-    // public function getTanggalAttribute()
-    // {
-    //     return date('d/m/Y', strtotime($this->attributes['tanggal']));
-    // }
+    public function sas()
+    {
+        return $this->hasMany(Sa::class);
+    }
+
+    public function kuotaHarians()
+    {
+        return $this->hasManyThrough(KuotaHarian::class, Sa::class);
+    }
+
 }

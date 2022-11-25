@@ -1,177 +1,157 @@
 @extends('layouts.app')
 
 @section('content')
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Surat Jalan</h1>
-                </div>
-                <div class="col-sm-6 d-flex justify-content-end">
 
+    <div class="container-fluid">
+        <div class="page-header">
+            <h4 class="page-title">Surat Jalan</h4>
+            <ul class="breadcrumbs">
+                <li class="nav-home">
+                    <a href="#">
+                        <i class="la la-home"></i>
+                    </a>
+                </li>
+                <li class="separator">
+                    <i class="la la-angle-right"></i>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Surat Jalan</a>
+                </li>
+                {{-- <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Buttons</a>
+            </li> --}}
+            </ul>
+            <div class="ml-auto">
+                {{-- <button>
                     <div class="input-group mr-2" style="width: 230px">
                         <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-filter"></i></span>
+                            <span class="input-group-text"><i class="la la-filter"></i></span>
                         </div>
                         <input type="text" name="daterange" class="form-control">
                     </div>
+                </button> --}}
 
+                <div class="dropdown d-inline-block mr-1">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="btn-label"><i class="la la-cloud-upload mr-1"></i></span>Export
                     </button>
-
-                    <button type="button" class="btn btn-default dropdown-toggle mr-2"
-                        data-toggle="dropdown">
-                        <i class="fas fa-cloud-download-alt mr-2"></i>Export
-                    </button>
-                    <div class="dropdown-menu export-button">
-                        <a class="dropdown-item excel" href="#"><i class="fas fa-file-excel mr-2"></i>Excel</a>
-                        <a class="dropdown-item csv" href="#"><i class="fas fa-file-csv mr-2"></i>CSV</a>
-                        <a class="dropdown-item print" href="#"><i class="fas fa-print mr-2"></i>Print</a>
-                        <a class="dropdown-item copy" href="#"><i class="fas fa-copy mr-2"></i>Copy</a>
+                    <div class="dropdown-menu dropdown-menu-right export-button" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item excel" href="#"><i class="la la-file-excel mr-1"></i>Excel</a>
+                        <a class="dropdown-item csv" href="#"><i class="las la-file-csv mr-1"></i>CSV</a>
+                        <a class="dropdown-item print" href="#"><i class="la la-print mr-1"></i>Print</a>
+                        <a class="dropdown-item copy" href="#"><i class="la la-copy mr-1"></i>Copy</a>
                     </div>
-                    <a href="{{ route('surat-jalan.create') }}" class="btn btn-primary"><i
-                            class="fas fa-plus mr-2"></i>Surat Jalan Baru</a>
-                    {{-- <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Surat Jalan</a></li>
-                        <li class="breadcrumb-item active">Buat</li>
-                    </ol> --}}
+                </div>
+
+
+                <a href="{{ route('surat-jalan.create') }}" class="btn btn-primary">
+                    <span class="btn-label"><i class="la la-plus mr-1"></i></span>
+                    Buat Surat Jalan
+                </a>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    {{-- <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <h4 class="card-title">Kitir</h4>
+                            
+                        </div>
+                    </div> --}}
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table data-table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        {{-- <th>ID</th> --}}
+                                        <th>Tanggal</th>
+                                        <th>SP(P)BE</th>
+                                        <th>No. SA</th>
+                                        <th>Truk</th>
+                                        <th>Sopir</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($pengambilans as $pengambilan)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            {{-- <td>{{ $pengambilan->id }}</td> --}}
+                                            <td>{{ tanggal($pengambilan->kuotaHarian->tanggal) }}</td>
+                                            <td>{{ $pengambilan->kuotaHarian->sa->sppbe->nama }}</td>
+                                            <td>{{ $pengambilan->kuotaHarian->sa->no_sa }}</td>
+                                            <td>{{ $pengambilan->truk->plat_nomor }}</td>
+                                            <td>{{ $pengambilan->sopir->nama }}</td>
+                                            <td class="text-center">
+                                                <div class="btn-group dropdown">
+                                                    <button class="btn btn-sm dropdown-toggle" type="button"
+                                                        data-toggle="dropdown">
+                                                        Aksi
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right" role="menu"
+                                                        aria-labelledby="dropdownMenu">
+                                                        <a class="dropdown-item" href="{{ route('surat-jalan.show', $pengambilan) }}"><i
+                                                                class="la la-eye mr-1"></i>Lihat</a>
+                                                        <a class="dropdown-item" href="{{ route('surat-jalan.edit', $pengambilan) }}"><i
+                                                                class="la la-edit mr-1"></i>Edit</a>
+                                                        <a class="dropdown-item"
+                                                            href="{{ route('surat-jalan.print', $pengambilan) }}" target="_blank" ><i
+                                                                class="la la-print mr-1"></i>Print</a>
+                                                        <div class="dropdown-divider"></div>
+                                                        <a class="dropdown-item delete-surat-jalan text-danger" href="#"
+                                                            data-id="{{ $pengambilan }}"><i
+                                                                class="la la-trash mr-1"></i>Hapus</a>
+                                                    </div>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
-    <section class="content">
-        <div class="container-fluid pb-3">
-            <div class="card card-primary">
-                {{-- <div class="card-header">
-                    <h3 class="card-title">Data Surat Jalan</h3>
-                </div> --}}
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Tanggal</th>
-                                    <th>SP(P)BE</th>
-                                    <th>No. SA</th>
-                                    <th>Armada</th>
-                                    <th>Sopir</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($pengambilans as $pengambilan)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $pengambilan->kitir->tanggal }}</td>
-                                        <td>{{ $pengambilan->kitir->sa->sppbe->nama }}</td>
-                                        <td>{{ $pengambilan->kitir->sa->no_sa }}</td>
-                                        <td>{{ $pengambilan->armada->plat_nomor }}</td>
-                                        <td>{{ $pengambilan->sopir->nama }}</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-                                            <a href="{{ route('surat-jalan.show', $pengambilan->id)}}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
-                                            <a href="{{ route('surat-jalan.pdf', $pengambilan)}}" class="btn btn-sm btn-info"><i class="fas fa-file-pdf"></i></a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-    </section>
+    </div>
 @endsection
 
 @push('script')
     <script>
-        $('input[name=daterange]').daterangepicker({
-            autoApply: false,
-            alwaysShowCalendars: true,
-            opens: 'left',
-            cancelClass: 'btn-white',
-            locale: {
-                format: "DD/MM/YYYY",
-            },
-          
-            ranges: {
-                'Today': [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf(
-                    'month')],
-                'This Year': [moment().startOf('year'), moment().endOf('year')],
-                'All Time': [moment('2015-01-01'), moment().add(1, 'days')],
-            },
+        $(document).ready(function() {
+            $('input[name=daterange]').daterangepicker({
+                autoApply: false,
+                alwaysShowCalendars: true,
+                opens: 'left',
+                cancelClass: 'btn-white',
+                locale: {
+                    format: "DD/MM/YYYY",
+                },
+
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1,
+                        'month').endOf(
+                        'month')],
+                    'This Year': [moment().startOf('year'), moment().endOf('year')],
+                    'All Time': [moment('2015-01-01'), moment().add(1, 'days')],
+                },
+            })
+
+
         })
-        const dataTable = $("table").DataTable({
-            buttons: [{
-                    extend: 'print',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5]
-                    },
-                    autoPrint: true,
-                    customize: function(win) {
-                        $(win.document.body).find('h1').css('text-align', 'center');
-                        $(win.document.body).find('h1').css('font-size', '20px');
-                    }
-                },
-                {
-                    extend: 'copyHtml5',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5]
-                    }
-                },
-                {
-                    extend: 'excelHtml5',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5]
-                    }
-                },
-                {
-                    extend: 'csvHtml5',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5]
-                    }
-                },
-                {
-                    extend: 'pdfHtml5',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5]
-                    }
-                }
-            ],
-        })
-
-        $(".export-button .print").on("click", function(e) {
-            e.preventDefault();
-            dataTable.button(0).trigger()
-        });
-
-        $(".export-button .copy").on("click", function(e) {
-            e.preventDefault();
-            dataTable.button(1).trigger()
-
-        });
-
-        $(".export-button .excel").on("click", function(e) {
-            e.preventDefault();
-            dataTable.button(2).trigger()
-
-        });
-
-        $(".export-button .csv").on("click", function(e) {
-            e.preventDefault();
-            dataTable.button(3).trigger()
-
-        });
-
-        $(".export-button .pdf").on("click", function(e) {
-            e.preventDefault();
-            dataTable.button(4).trigger()
-        });
     </script>
 @endpush

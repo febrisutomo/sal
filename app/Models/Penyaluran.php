@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use App\Models\Armada;
+use App\Models\Truk;
 use App\Models\Pangkalan;
 use App\Models\PangkalanPenyaluran;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Penyaluran extends Model
@@ -25,18 +26,16 @@ class Penyaluran extends Model
             ->withTrashed();
     }
 
-    public function armada()
+    public function truk()
     {
-        return $this->belongsTo(Armada::class);
+        return $this->belongsTo(Truk::class);
     }
 
-    public function getTotalBayarAttribute()
+    public function subtotal(): Attribute
     {
-        return $this->bases->sum('pivot.bayar');
+        return new Attribute(
+            get: fn () => $this->pivot->kuantitas,
+        );
     }
-
-    public function getTotalPenyaluranAttribute()
-    {
-        return $this->bases->sum('pivot.diserahkan');
-    }
+    
 }
