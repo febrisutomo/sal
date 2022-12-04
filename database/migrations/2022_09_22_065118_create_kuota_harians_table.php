@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('sa_id')->constrained()->cascadeOnDelete();
             $table->date('tanggal');
             $table->integer('kuota');
-            $table->integer('sisa_kuota');
             $table->timestamps();
         });
     }

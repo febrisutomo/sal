@@ -1,13 +1,12 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'Kitir'])
 
 @section('content')
-
     <div class="container-fluid">
         <div class="page-header">
             <h4 class="page-title">Kitir Bulanan</h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
-                    <a href="#">
+                    <a href="{{ route('dashboard') }}">
                         <i class="la la-home"></i>
                     </a>
                 </li>
@@ -19,7 +18,7 @@
                 </li>
             </ul>
             <div class="ml-auto">
-                <div class="dropdown d-inline-block mr-1">
+                <div class="dropdown d-inline-block mr-2">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="btn-label"><i class="la la-cloud-upload mr-1"></i></span>Export
@@ -44,14 +43,14 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered data-table">
+                            <table id="tbKitir" class="table table-bordered data-table">
                                 <thead>
                                     <tr>
                                         <th class="text-center" style="width: 40px">No.</th>
                                         <th>Bulan</th>
-                                        <th>Total</th>
-                                        <th>Hari Kerja</th>
-                                        <th style="width: 60px">Aksi</th>
+                                        <th class="text-center" style="width: 80px">Total</th>
+                                        <th class="text-center" style="width: 80px">Hari Kerja</th>
+                                        <th class="text-center" style="width: 120px">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -59,8 +58,9 @@
                                         <tr>
                                             <td class="text-center">{{ $loop->iteration }}</td>
                                             <td class="text-uppercase">{{ bulan($kitir->bulan_tahun) }}</td>
-                                            <td></td>
-                                            <td></td>
+                                            <td class="text-center number">{{ $kitir->kuotaHarians->sum('kuota') }}</td>
+                                            <td class="text-center">{{ $kitir->kuotaHarians->groupBy('tanggal')->count() }}
+                                            </td>
                                             {{-- <td> --}}
                                             {{-- <div class="form-button-action">
                                                     <a href="{{ route('kitir.edit', $kitir) }}" data-toggle="tooltip"
@@ -75,10 +75,9 @@
                                                     </button>
                                                 </div> --}}
                                             <td class="text-center">
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm dropdown-toggle" type="button"
-                                                        data-toggle="dropdown">
-                                                        Aksi
+                                                {{-- <div class="dropdown">
+                                                    <button class="btn dropdown-toggle btn-sm" type="button"
+                                                        data-toggle="dropdown"><span class="btn-label">Aksi</span>
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-right" role="menu"
                                                         aria-labelledby="dropdownMenu">
@@ -86,9 +85,8 @@
                                                         <a class="dropdown-item edit-kitir"
                                                             href="{{ route('kitir.edit', $kitir) }}"><i
                                                                 class="la la-edit mr-1"></i>Edit</a>
-                                                        <a class="dropdown-item"
-                                                            href="{{ route('kitir.print', $kitir) }}" target="_blank" ><i
-                                                                class="la la-print mr-1"></i>Print</a>
+                                                        <a class="dropdown-item" href="{{ route('kitir.print', $kitir) }}"
+                                                            target="_blank"><i class="la la-print mr-1"></i>Print</a>
                                                         <div class="dropdown-divider"></div>
                                                         <a class="dropdown-item delete-kitir text-danger" href="#"
                                                             data-id="{{ $kitir->bulan_tahun }}"><i
@@ -96,8 +94,23 @@
 
                                                     </div>
 
-                                                </div>
-
+                                                </div> --}}
+                                                
+                                                    <a href="{{ route('kitir.edit', $kitir) }}" data-toggle="tooltip"
+                                                        title="" class="btn btn-link btn-primary px-2"
+                                                        data-original-title="Edit"><span class="btn-label"><i class="la la-edit"></i></span>
+                                                        
+                                                    </a>
+                                                    <a href="{{ route('kitir.print', $kitir) }}" data-toggle="tooltip"
+                                                        title="" class="btn btn-link btn-secondary px-2"
+                                                        data-original-title="Cetak"><span class="btn-label"><i class="la la-print"></i></span>
+                                                        
+                                                    </a>
+                                                    <button type="button" data-toggle="tooltip" title=""
+                                                        class="btn btn-link btn-danger delete-kitir px-2"
+                                                        data-id="{{ $kitir->bulan_tahun }}" data-original-title="Hapus">
+                                                        <span class="btn-label"><i class="la la-trash"></i></span>
+                                                    </button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -161,14 +174,18 @@
                     },
                     success: function(response) {
                         $('#modalKitir').modal('hide')
-
-                        Toast.fire({
-                            icon: 'success',
-                            title: response.message,
-                        }).then(function() {
-                            window.location.href = window.location.origin + '/kitir/' +
-                                bulan_tahun + '/edit';
-                        })
+                        toastr.success(
+                            response.message,
+                            'Success', {
+                                timeOut: 1000,
+                                fadeOut: 1000,
+                                onHidden: function() {
+                                    window.location.href = window.location.origin +
+                                        '/kitir/' +
+                                        bulan_tahun + '/edit';
+                                }
+                            }
+                        );
                     },
                     error: function(jqXHR) {
                         if (jqXHR.status == 419) {
@@ -177,8 +194,6 @@
                                 title: 'Session Expired',
                                 text: 'Silahkan login kembali!',
                                 icon: 'warning',
-                            }).then((result) => {
-                                location.reload()
                             })
                         }
                         $('#modalKitir .feedback').addClass('invalid-feedback').text(jqXHR
@@ -194,9 +209,9 @@
             })
 
             $('body').on('click', '.delete-kitir', function(e) {
-                e.stopPropagation()
+                e.preventDefault()
                 swal.fire({
-                    title: 'Apakah anda yakin?',
+                    title: 'Anda yakin ingin menghapus ini?',
                     text: 'Bulan : ' + new Date(this.dataset.id + '-01').toLocaleDateString(
                         'id-ID', {
                             year: 'numeric',
@@ -216,20 +231,32 @@
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
                             success: function(response) {
+                                toastr.success(
+                                    response.message,
+                                    'Success', {
+                                        timeOut: 1000,
+                                        fadeOut: 1000,
+                                        onHidden: function() {
+                                            window.location.reload()
+                                        }
+                                    }
+                                );
+                            },
+                            error: function(jqXHR) {
                                 swal.fire({
-                                    icon: 'success',
-                                    title: 'Berhasil!',
-                                    text: response.message,
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                }).then(function() {
-                                    location.reload()
+                                    title: 'Error',
+                                    text: jqXHR
+                                        .responseJSON.message,
+                                    icon: 'warning',
                                 })
+
                             }
                         })
                     }
                 })
             })
+
+            tableExport('#tbKitir', [0, 1, 2, 3])
         })
     </script>
 @endpush

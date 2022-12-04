@@ -14,15 +14,29 @@ class KuotaHarian extends Model
         'tanggal',
         'sa_id',
         'kuota',
-        'sisa_kuota',
     ];
 
+    protected $appends = [
+        'diambil'
+    ];
   
 
     public function sa()
     {
         return $this->belongsTo(Sa::class);
     }
+
+    public function pengambilans()
+    {
+        return $this->hasMany(Pengambilan::class);
+    }
+
+    public function getDiambilAttribute()
+    {
+        return $this->pengambilans->sum('jumlah');
+    }
+
+
 
     // public function getTanggalAttribute()
     // {

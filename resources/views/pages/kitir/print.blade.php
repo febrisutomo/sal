@@ -5,14 +5,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kitir Bulanan</title>
+    <title>Cetak Kitir Bulan {{ bulan($kitir->bulan_tahun) }}</title>
 </head>
 
 @php
     $bulanTahun = $kitir->bulan_tahun;
 @endphp
+
 <body>
-    <h3 style="text-transform: uppercase">SA Reguler {{ bulan($kitir->bulan_tahun) }}</h3>
+    <h3 style="text-transform: uppercase">SA Reguler {{ bulan($kitir->bulan_tahun) }}
+        ({{ $kitir->kuotaHarians->groupBy('tanggal')->count() }} HK)</h3>
     @foreach ($dates as $week)
         @php
             $last_week = $loop->last;
@@ -56,7 +58,7 @@
                                 @php
                                     $used = $sa->kuotaHarians->contains(function ($value, $key) use ($bulanTahun, $week) {
                                         return date('Y-m-d', strtotime($value->tanggal)) >= date('Y-m-d', strtotime($bulanTahun . '-' . $week[0])) && date('Y-m-d', strtotime($value->tanggal)) <= date('Y-m-d', strtotime($bulanTahun . '-' . ($week[count($week) - 1] ?? 31)));
-                                    })
+                                    });
                                 @endphp
                                 <div
                                     class="{{ $sa->tipe == 'tambahan' ? 'text-danger' : '' }} {{ $used ? '' : 'd-none' }}">
@@ -76,13 +78,13 @@
                                     ? 'bg-warning text-danger'
                                     : '' }}">
                                 @if ($k->count())
-                                    {{ $k->sum('kuota') }}
+                                    {{ num_format($k->sum('kuota')) }}
                                 @endif
                             </td>
                         @endforeach
                         @if ($last_week)
                             <td class="text-right subtotal">
-                                {{ $kitir->kuotaHarians->where('sa.sppbe_id', $sppbe->id)->sum('kuota') }}
+                                {{ num_format($kitir->kuotaHarians->where('sa.sppbe_id', $sppbe->id)->sum('kuota')) }}
                             </td>
                         @endif
 
@@ -96,13 +98,13 @@
                     @foreach ($week as $day)
                         <th class="text-right">
                             @if ($day != null && $loop->iteration != 1)
-                                {{ $kitir->kuotaHarians->where('tanggal', $bulanTahun . '-' . str_pad($day, 2, '0', STR_PAD_LEFT))->sum('kuota') }}
+                                {{ num_format($kitir->kuotaHarians->where('tanggal', $bulanTahun . '-' . str_pad($day, 2, '0', STR_PAD_LEFT))->sum('kuota')) }}
                             @endif
                         </th>
                     @endforeach
                     @if ($last_week)
                         <th class="text-right total">
-                            {{ $kitir->kuotaHarians->sum('kuota') }}</th>
+                            {{ num_format($kitir->kuotaHarians->sum('kuota')) }}</th>
                     @endif
                 </tr>
             </tfoot>
@@ -111,6 +113,10 @@
 </body>
 
 <style>
+    @page {
+        margin: 1rem 4rem;
+    }
+
     body {
         font-family: Arial, Helvetica, sans-serif;
     }
@@ -144,7 +150,21 @@
         border: 0;
     }
 
-    .KMSU {
+    tbody tr:nth-child(odd) {
+        background-color: lightskyblue;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: lightpink;
+    }
+
+    .bg-warning {
+        background-color: #ffda07 !important
+    }
+
+
+
+    /* .KMSU {
         background-color: lightgrey
     }
 
@@ -162,7 +182,7 @@
 
     .bg-warning {
         background-color: yellow !important
-    }
+    } */
 
     .d-none {
         display: none

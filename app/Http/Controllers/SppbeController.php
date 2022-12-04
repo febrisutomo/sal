@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Sppbe;
 use Illuminate\Http\Request;
 
@@ -100,7 +101,7 @@ class SppbeController extends Controller
 
         $sppbe->update($validated);
 
-        return to_route('sppbe.index')->with('success', 'SP(P)BE berhasil diubah!');
+        return to_route('sppbe.index')->with('success', 'SP(P)BE berhasil diperbarui!');
     }
 
     /**
@@ -111,11 +112,18 @@ class SppbeController extends Controller
      */
     public function destroy(Sppbe $sppbe)
     {
-        $sppbe->delete();
+        try {
+            $sppbe->delete();
+
+            $messaage = 'SP(P)BE berhasil dihapus';
+            $status = 200;
+        } catch (Exception $e) {
+            $messaage = 'SP(P)BE gagal dihapus!';
+            $status = 500;
+        }
 
         return response()->json([
-            'success' => true,
-            'message' => 'SP(P)BE berhasil dihapus!'
-        ]);
+            'message' => $messaage
+        ], $status);
     }
 }

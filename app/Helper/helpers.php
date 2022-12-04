@@ -1,12 +1,12 @@
 <?php
 
-function rupiah($angka)
+function rupiah(int $angka): string
 {
 
 	return "Rp " . number_format($angka, 0, ',', '.');
 }
 
-function tanggal($tanggal, $cetak_hari = false)
+function tanggal(string $tanggal, bool $cetak_hari = false): string
 {
 	$tanggal = date('Y-m-j', strtotime($tanggal));
 	$hari = array ( 1 =>    'Senin',
@@ -40,7 +40,9 @@ function tanggal($tanggal, $cetak_hari = false)
 	}
 	return $tgl;
 }
-function bulan($tanggal)
+
+
+function bulan(string $tanggal): string
 {
 	$bulan = array (1 =>   'Januari',
 				'Februari',
@@ -58,4 +60,8 @@ function bulan($tanggal)
 	$split 	  = explode('-', $tanggal);
 
 	return $bulan[ (int)$split[1] ] . ' ' . $split[0];
+}
+
+function num_format($number){
+	return number_format(num: $number, thousands_separator: ".");
 }

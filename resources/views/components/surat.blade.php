@@ -4,10 +4,10 @@
         <tr> 
             <td><img src="{{ asset('img/logo-sal.png') }}" height="90"></td>
             <td>
-                <div class="font-weight-bold" style="font-size: 1.5rem">PT SERAYU AGUNG LESTARI</div>
+                <div class="font-weight-bold text-uppercase" style="font-size: 1.5rem">{{ Setting::get()->nama_perusahaan }}</div>
                 <div class="font-weight-bold" style="font-size: 1.2rem">AGEN GAS ELPIJI 3 KG</div>
-                <div style="font-size: 0.8rem">Alamat: Jl. Kulon No. 674 Sudagaran, Banyumas, Jawa Tengah 53192 <br>
-                    Telp/Fax: 0281-796009, E-mail : ptserayuagunglestari@gmail.com</div>
+                <div style="font-size: 0.8rem">{{ Setting::get()->alamat }}<br>
+                    Telp/Fax: {{ Setting::get()->telepon }}, E-mail : {{ Setting::get()->email }}</div>
             </td>
             <td><img src="{{ asset('img/logo-elpiji.png') }}" height="90"></td>
         </tr>
@@ -33,8 +33,8 @@
 
     <br>
     <div style="margin-bottom: 1rem">
-        Banyumas, {{ tanggal($pengambilan->kuotaHarian->tanggal) }} <br>
-        PT Serayu Agung Lestari
+        Banyumas, {{ tanggal($pengambilan->created_at) }} <br>
+        {{ Setting::get()->nama_perusahaan }}
     </div>
 
     <table>
@@ -43,7 +43,7 @@
                 <div>
                     <img src="{{asset('img/ttd-yuli.jpg')}}" width="150px">
                 </div>
-                <u>DWI YULIARTO</u><br>
+                <u class="text-uppercase">{{ Setting::get()->nama_manager }}</u><br>
                 <i>Manager</i>
             </td>
             <td style="width: 5rem"></td>

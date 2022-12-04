@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Surat Jalan</title>
+    <title>Cetak Surat Jalan</title>
 </head>
 
 <body>
@@ -289,7 +289,7 @@
         <div>
             <img src="{{asset('img/ttd-yuli.jpg')}}" width="120px">
         </div>
-        <div><u>DWI YULIARTO</u></div>
+        <div><u class="text-uppercase">{{ Setting::get()->nama_manager }}</u></div>
     </div>
 
 

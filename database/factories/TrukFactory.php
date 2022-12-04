@@ -20,7 +20,7 @@ class TrukFactory extends Factory
     public function definition()
     {
         return [
-            'kode' => 'SAL-0'.collect([1, 2, 3, 4])->random(),
+            'kode' => 'SAL-0'.$this->faker->numberBetween(1,9),
             'merk' => collect(['Hino Dutro', 'Mitsubishi Colt Diesel', 'Izuzu Elf'])->random(),
             'plat_nomor' => "R ".$this->faker->numberBetween(1000, 9999)." ".Str::upper($this->faker->lexify('??')),
             'kapasitas' => 560,

@@ -8,4 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 class Setting extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'nama_perusahaan',
+        'alamat',
+        'email',
+        'telepon',
+        'nama_manager',
+        'ttd_manager',
+    ];
+    public static function get()
+    {
+        return self::first();
+    }
+
+    public static function set($data)
+    {
+        return self::first()->update($data);
+    }
 }

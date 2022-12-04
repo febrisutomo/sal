@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('plat_nomor')->unique();
             $table->string('merk');
             $table->integer('kapasitas');
-            $table->foreignId('sopir_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('kernet_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('sopir_id')->constrained();
+            $table->foreignId('kernet_id')->constrained();
             $table->timestamps();
         });
     }

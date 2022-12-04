@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('no_sa');
             $table->foreignId('kitir_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('sppbe_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('sppbe_id')->constrained();
             $table->enum('tipe', ['reguler', 'tambahan']);
             $table->timestamps();
         });

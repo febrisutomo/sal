@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'Edit Surat Jalan'])
 
 @section('content')
     <div class="data" data-pengambilan='@json($pengambilan)'></div>
@@ -7,7 +7,7 @@
             <h4 class="page-title">Edit Surat Jalan</h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
-                    <a href="#">
+                    <a href="{{ route('dashboard') }}">
                         <i class="la la-home"></i>
                     </a>
                 </li>
@@ -37,6 +37,7 @@
                     <div class="card">
 
                         <div class="card-body">
+                            <h6>Pengambilan</h6>
                             <div class="row mb-3">
                                 <div class="col-lg-6">
                                     <div class="form-group form-show-validation">
@@ -102,7 +103,7 @@
                                                 data-placeholder="Pilih Truk" required>
                                                 <option value=""></option>
                                                 @foreach ($truks as $truk)
-                                                    <option value="{{ $truk->id }}" @selected($pengambilan->truk->id == $truk->id)>
+                                                    <option value="{{ $truk->id }}" data-truk='@json($truk)' @selected($pengambilan->truk->id == $truk->id)>
                                                         {{ $truk->kode }} | {{ $truk->plat_nomor }} </option>
                                                 @endforeach
                                             </select>
@@ -153,7 +154,7 @@
                             </div>
 
                             <h6 classr="required">Penukaran</h6>
-                            <div class="mb-3">
+                            <div class="form-group px-0">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="la la-barcode"></i></span>
@@ -292,13 +293,13 @@
                                                 <td class="alamat">
                                                     {{ $penyaluran->alamat }}
                                                 </td>
-                                                <td class="harga text-right" data-val="14500">
-                                                    {{ rupiah(14500) }}
+                                                <td class="harga text-right">
+                                                    {{ rupiah($penyaluran->pivot->harga) }}
                                                 </td>
                                                 <td class="text-right" style="max-width: 80px">
                                                     <input type="number" name="penyaluran[{{ $index }}][jumlah]"
-                                                        onkeyup="hitungSubtotal(this)" onchange="validasiInput(this)"
                                                         class="form-control text-right"
+                                                        data-kuota="{{ $penyaluran->kuota }}"
                                                         value="{{ $penyaluran->pivot->kuantitas }}" min="0">
                                                 </td>
                                                 <td class="subtotal text-right">
@@ -316,7 +317,7 @@
                                         <tr>
                                             <th colspan="4">
                                             </th>
-                                            <th id="totalBarang" class="text-right">
+                                            <th class="total-penyaluran" class="text-right">
                                                 0
                                             </th>
                                             <th id="totalHarga" class="text-right">
@@ -328,6 +329,27 @@
 
                                 </table>
                             </div>
+                            <table class="table table-bordered " style="width: 400px">
+                                <tr>
+                                    <th>Stok Gudang</th>
+                                    <th class="text-right">
+                                        {{ $pengambilans->sum('jumlah') - $pengambilans->sum('total_penyaluran') }}
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>Total Pengambilan</th>
+                                    <th class="text-right">560</th>
+                                </tr>
+                                <tr>
+                                    <th>Total Penyaluran</th>
+                                    <th class="text-right total-penyaluran">0</th>
+                                </tr>
+                                <tr class="stok-gudang">
+                                    <th>Simpan ke Gudang</th>
+                                    <th class="text-right">0</th>
+                                </tr>
+                            </table>
+
                         </div>
                         <div class="card-footer">
                             <div class="text-center">
@@ -355,15 +377,13 @@
 
             let pengambilan = $('.data').data('pengambilan')
 
-            function rupiah(num) {
-                return 'Rp ' + num.toLocaleString("id-ID", {
-                    style: "decimal"
-                })
-            }
+            let stok_gudang = parseInt({{ $pengambilans->sum('jumlah') - $pengambilans->sum('total_penyaluran') }})
+            let total_pengambilan = 560
+            let total_penyaluran = 0
 
             let tanggal = pengambilan.kuota_harian.tanggal
 
-            const harga = 14500
+            const harga = pengambilan.penyalurans[0].pivot.harga
 
             function getNoSA() {
                 $('select[name=kuota_harian_id]').attr('disabled', true)
@@ -378,7 +398,7 @@
                         let options = `<option value=""></option>`
                         $.each(response.data, function(key, value) {
                             options +=
-                                `<option value="${value.id}" ${pengambilan.kuota_harian.id == value.id ? 'selected' : ''} ${value.sisa_kuota <= 0 && value.id != pengambilan.kuota_harian_id  ? 'disabled' : ''} >${value.sa.no_sa} (${value.sa.tipe}) (${parseInt(value.sisa_kuota)/560}/${parseInt(value.kuota)/560})</option>`
+                                `<option value="${value.id}" ${pengambilan.kuota_harian.id == value.id ? 'selected' : ''} ${value.diambil == value.kuota && value.id != pengambilan.kuota_harian_id  ? 'disabled' : ''} >${value.sa.no_sa} (${value.sa.tipe}) (${value.diambil}/${value.kuota})</option>`
                         })
                         $('select[name=kuota_harian_id]').html(options)
                     },
@@ -428,6 +448,13 @@
 
             $('select[name="sppbe_id"]').on('change', function() {
                 getNoSA()
+            })
+
+            $('select[name="truk_id').on('change', function(){
+                let truk = $('select[name=truk_id] option:selected').data('truk')
+
+                $('select[name=sopir_id]').val(truk.sopir_id).trigger('change');
+                $('select[name=kernet_id]').val(truk.kernet_id).trigger('change');
             })
 
 
@@ -529,6 +556,14 @@
                     el.value = 0
                     hitungSubtotal(el)
                 }
+                if (total_penyaluran > total_pengambilan + stok_gudang) {
+                    swal.fire({
+                        icon: 'warning',
+                        title: 'Stok gudang tidak mencukupi!',
+                    })
+                    el.value = el.dataset.kuota
+                    hitungSubtotal(el)
+                }
             }
 
             function hitungSubtotal(el) {
@@ -538,16 +573,27 @@
             }
 
             function hitungTotal() {
-                let totalBarang = 0
+                total_penyaluran = 0
 
                 $('input[name*="jumlah"]').each(function() {
                     if (this.value != '') {
-                        totalBarang += parseInt(this.value)
+                        total_penyaluran += parseInt(this.value)
                     }
                 })
 
-                $('#totalBarang').text(totalBarang)
-                $('#totalHarga').text(rupiah(totalBarang * harga))
+                if (total_penyaluran > total_pengambilan) {
+                    let td =
+                        `  <th class="text-warning">Ambil dari Gudang</th>
+                                        <th class="text-right text-warning">${total_penyaluran - total_pengambilan}</th>`
+                    $('.stok-gudang').html(td)
+                } else {
+                    let td =
+                        `  <th class="text-success">Simpan ke Gudang</th>
+                                        <th class="text-right text-success">${total_pengambilan - total_penyaluran}</th>`
+                    $('.stok-gudang').html(td)
+                }
+                $('.total-penyaluran').text(total_penyaluran)
+                $('#totalHarga').text(rupiah(total_penyaluran * harga))
 
             }
 
@@ -595,8 +641,8 @@
                     return pangkalan.nama;
                 }
                 var $pangkalan = $(
-                    '<div>' + pangkalan.nama + '</div><div>' +
-                    pangkalan.alamat + '</div><div>'
+                    '<div><b>' + pangkalan.nama + '</b></div><div>' +
+                    pangkalan.alamat + ' | kuota: ' + pangkalan.kuota + '</div><div>'
                 );
                 return $pangkalan;
             };
@@ -631,7 +677,13 @@
 
             $('select[name="add_penyaluran"]').on('select2:select', function(e) {
                 let pangkalan = e.params.data;
-                let tr = `<tr>
+                if (total_penyaluran + pangkalan.kuota > total_pengambilan + stok_gudang) {
+                    swal.fire({
+                        icon: 'warning',
+                        title: 'Stok gudang tidak mencukupi!',
+                    })
+                } else {
+                    let tr = `<tr>
                                             <td class="no text-center">1</td>
                                             <td>
                                                 <input type="hidden" name="penyaluran[0][pangkalan_id]" value="${pangkalan.id}">
@@ -647,8 +699,7 @@
                                             </td>
                                             <td class="text-right">
                                                 <input type="number" name="penyaluran[0][jumlah]"
-                                                    onchange="validasiInput(this)" onkeyup="hitungSubtotal(this)"
-                                                    class="form-control text-right" value="${pangkalan.kuota}" min="0">
+                                                    class="form-control text-right" data-kuota="${pangkalan.kuota}" value="${pangkalan.kuota}" min="0">
                                             </td>
                                             <td class="subtotal text-right">
                                                     ${rupiah(pangkalan.kuota * harga)}
@@ -658,14 +709,16 @@
                                                             class="la la-trash"></i></span></button>
                                             </td>
                                         </tr>`
-                if ($('#tb_penyaluran tbody tr.empty-data')) {
-                    $('#tb_penyaluran tbody tr.empty-data').remove()
+                    if ($('#tb_penyaluran tbody tr.empty-data')) {
+                        $('#tb_penyaluran tbody tr.empty-data').remove()
+                    }
+                    $('#tb_penyaluran tbody').append(tr)
+                    reindexPenyaluran()
+                    hitungTotal()
+                    reloadOption()
                 }
-                $('#tb_penyaluran tbody').append(tr)
-                reindexPenyaluran()
-                hitungTotal()
-                reloadOption()
                 $(this).val('').trigger('change')
+
 
             })
 
@@ -684,6 +737,14 @@
 
             hitungTotal()
             reloadOption()
+
+
+            $('body').on('change', 'input[name*="jumlah"]', function() {
+                validasiInput(this)
+            })
+            $('body').on('keyup', 'input[name*="jumlah"]', function() {
+                hitungSubtotal(this)
+            })
 
         })
     </script>

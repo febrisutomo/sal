@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
+use Exception;
 use App\Models\Sa;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SaController extends Controller
@@ -104,7 +105,7 @@ class SaController extends Controller
 
         $sa->update($validated);
 
-        return response()->json(['message' => 'No. SA berhasil diubah!']);
+        return response()->json(['message' => 'No. SA berhasil diperbarui!']);
     }
 
     /**
@@ -115,11 +116,18 @@ class SaController extends Controller
      */
     public function destroy(Sa $sa)
     {
-        $sa->delete();
+        try {
+            $sa->delete();
+
+            $messaage = 'No. SA berhasil dihapus';
+            $status = 200;
+        } catch (Exception $e) {
+            $messaage = 'No. SA sudah digunakan!';
+            $status = 500;
+        }
 
         return response()->json([
-            'success' => true,
-            'message' => 'No. SA berhasil dihapus!'
-        ]);
+            'message' => $messaage
+        ], $status);
     }
 }

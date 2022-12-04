@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Traits\UploadFileTrait;
+use Exception;
 use App\Models\Sopir;
 use Illuminate\Http\Request;
+use App\Http\Traits\UploadFileTrait;
 
 class SopirController extends Controller
 {
@@ -115,7 +116,7 @@ class SopirController extends Controller
         $sopir->update($validated);
 
 
-        return to_route('armada.sopir.index')->with('success', 'Sopir berhasil diubah!');
+        return to_route('armada.sopir.index')->with('success', 'Sopir berhasil diperbarui!');
     }
 
     /**
@@ -126,14 +127,21 @@ class SopirController extends Controller
      */
     public function destroy(Sopir $sopir)
     {
-        $sopir->delete();
+      
+        try {
+            $sopir->delete();
+            $this->deleteFile($sopir->ttd, 'img/sopir');
 
-        $this->deleteFile($sopir->ttd, 'img/sopir');
+            $messaage = 'Sopir berhasil dihapus';
+            $status = 200;
+        } catch (Exception $e) {
+            $messaage = 'Sopir gagal dihapus!';
+            $status = 500;
+        }
 
         return response()->json([
-            'success' => true,
-            'message' => 'Sopir berhasil dihapus!'
-        ]);
+            'message' => $messaage
+        ], $status);
     }
 
     

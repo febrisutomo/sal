@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\Kitir;
 use App\Models\Sppbe;
-use App\Models\KuotaHarian;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
@@ -27,7 +25,9 @@ class KitirController extends Controller
         $data = [
             'kitirs' => Kitir::orderBy('bulan_tahun', 'DESC')->get(),
         ];
-        return view('pages/kitir/index', $data);
+
+        return view('pages.kitir.index', $data);
+
     }
 
     /**
@@ -86,13 +86,13 @@ class KitirController extends Controller
     public function edit(Kitir $kitir)
     {
 
-        // dd($kitir->load('sas.kuotaHarians', 'sas.sppbe'));
         $data = [
             'kitir' => $kitir->load('sas.kuotaHarians', 'sas.sppbe'),
             'sppbes' => Sppbe::with('sas')->orderBy('nama')->get(),
             'dates' => $this->_calendar($kitir->bulan_tahun),
         ];
-        return view('pages/kitir/edit', $data);
+
+        return view('pages.kitir.edit', $data);
     }
 
     /**

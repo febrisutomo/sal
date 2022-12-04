@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'Buat Surat Jalan'])
 
 @section('content')
     <div class="container-fluid">
@@ -6,7 +6,7 @@
             <h4 class="page-title">Buat Surat Jalan</h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
-                    <a href="#">
+                    <a href="{{ route('dashboard') }}">
                         <i class="la la-home"></i>
                     </a>
                 </li>
@@ -14,7 +14,7 @@
                     <i class="la la-angle-right"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="#">Surat Jalan</a>
+                    <a href="{{ route('surat-jalan.index') }}">Surat Jalan</a>
                 </li>
                 <li class="separator">
                     <i class="la la-angle-right"></i>
@@ -37,6 +37,8 @@
                     <div class="card">
 
                         <div class="card-body">
+
+                            <h6 classr="required">Pengambilan</h6>
                             <div class="row mb-3">
                                 <div class="col-lg-6">
                                     <div class="form-group form-show-validation">
@@ -48,7 +50,8 @@
                                                 </span>
                                             </div>
                                             <input type="text" class="form-control" id="tanggal" name="tanggal"
-                                                placeholder="Pilih Tanggal" value="{{ old('tanggal', date('d/m/Y')) }}" required>
+                                                placeholder="Pilih Tanggal" value="{{ old('tanggal', date('d/m/Y')) }}"
+                                                required>
                                         </div>
 
                                     </div>
@@ -65,7 +68,7 @@
                                                 data-placeholder="Pilih SPPBE" required>
                                                 <option value=""></option>
                                                 @foreach ($sppbes as $sppbe)
-                                                    <option value="{{ $sppbe->id }}">
+                                                    <option value="{{ $sppbe->id }}" @selected($sppbe_id == $sppbe->id)>
                                                         {{ $sppbe->nama }}</option>
                                                 @endforeach
                                             </select>
@@ -105,7 +108,8 @@
                                                 data-placeholder="Pilih Truk" required>
                                                 <option value=""></option>
                                                 @foreach ($truks as $truk)
-                                                    <option value="{{ $truk->id }}"> {{ $truk->kode }} |
+                                                    <option value="{{ $truk->id }}"
+                                                        data-truk='@json($truk)'> {{ $truk->kode }} |
                                                         {{ $truk->plat_nomor }}
                                                     </option>
                                                 @endforeach
@@ -157,7 +161,7 @@
                             </div>
 
                             <h6 classr="required">Penukaran</h6>
-                            <div class="mb-3">
+                            <div class="form-group px-0">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="la la-barcode"></i></span>
@@ -236,9 +240,10 @@
                                     </tbody>
                                     <tfoot id="tfoot">
                                         <tr>
-                                            <th colspan="4">
+                                            <th class="text-right" colspan="4">
+                                                Total
                                             </th>
-                                            <th id="totalBarang" class="text-right">
+                                            <th class="total-penyaluran" class="text-right">
                                                 0
                                             </th>
                                             <th id="totalHarga" class="text-right">
@@ -246,10 +251,36 @@
                                             </th>
                                             <th></th>
                                         </tr>
+                                        <tr>
+
+                                        </tr>
                                     </tfoot>
 
                                 </table>
+
+
                             </div>
+                            <table class="table table-bordered " style="width: 400px">
+                                <tr>
+                                    <th>Stok Gudang</th>
+                                    <th class="text-right">
+                                        {{ $pengambilans->sum('jumlah') - $pengambilans->sum('total_penyaluran') }}
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>Total Pengambilan</th>
+                                    <th class="text-right">560</th>
+                                </tr>
+                                <tr>
+                                    <th>Total Penyaluran</th>
+                                    <th class="text-right total-penyaluran">0</th>
+                                </tr>
+                                <tr class="stok-gudang">
+                                    <th>Simpan ke Gudang</th>
+                                    <th class="text-right">0</th>
+                                </tr>
+                            </table>
+
                         </div>
                         <div class="card-footer">
                             <div class="text-center">
@@ -274,18 +305,15 @@
         });
 
 
-
         $(document).ready(function() {
 
-            function rupiah(num) {
-                return 'Rp ' + num.toLocaleString("id-ID", {
-                    style: "decimal"
-                })
-            }
+            let stok_gudang = parseInt({{ $pengambilans->sum('jumlah') - $pengambilans->sum('total_penyaluran') }})
+            let total_pengambilan = 560
+            let total_penyaluran = 0
+            let no_sa = parseInt({{ $no_sa }})
 
             let tanggal = moment($('#tanggal').val(), 'DD/MM/YYYY').format('YYYY-MM-DD')
 
-            console.log(tanggal);
 
             const harga = 14500
 
@@ -302,7 +330,7 @@
                         let options = `<option value=""></option>`
                         $.each(response.data, function(key, value) {
                             options +=
-                                `<option value="${value.id}" ${value.sisa_kuota <= 0 ? 'disabled' : ''} >${value.sa.no_sa} (${value.sa.tipe}) (${parseInt(value.sisa_kuota)/560}/${parseInt(value.kuota)/560})</option>`
+                                `<option value="${value.id}" ${value.diambil == value.kuota ? 'disabled' : ''} ${value.sa.no_sa == no_sa ? 'selected' : ''} >${value.sa.no_sa} (${value.sa.tipe}) (${parseInt(value.diambil)}/${parseInt(value.kuota)})</option>`
                         })
                         $('select[name=kuota_harian_id]').html(options)
                     },
@@ -312,7 +340,9 @@
                 })
             }
 
-            
+            getNoSA()
+
+
             $("#suratJalan").validate({
                 highlight: function(element) {
                     $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
@@ -348,6 +378,14 @@
 
             $('select[name="sppbe_id"]').on('change', function() {
                 getNoSA()
+            })
+
+
+            $('select[name="truk_id').on('change', function() {
+                let truk = $('select[name=truk_id] option:selected').data('truk')
+
+                $('select[name=sopir_id]').val(truk.sopir_id).trigger('change');
+                $('select[name=kernet_id]').val(truk.kernet_id).trigger('change');
             })
 
 
@@ -451,6 +489,15 @@
                     el.value = 0
                     hitungSubtotal(el)
                 }
+                if (total_penyaluran > total_pengambilan + stok_gudang) {
+                    swal.fire({
+                        icon: 'warning',
+                        title: 'Stok gudang tidak mencukupi!',
+                    })
+                    el.value = el.dataset.kuota
+                    hitungSubtotal(el)
+                }
+
             }
 
             function hitungSubtotal(el) {
@@ -460,16 +507,27 @@
             }
 
             function hitungTotal() {
-                let totalBarang = 0
+                total_penyaluran = 0
 
                 $('input[name*="jumlah"]').each(function() {
                     if (this.value != '') {
-                        totalBarang += parseInt(this.value)
+                        total_penyaluran += parseInt(this.value)
                     }
                 })
 
-                $('#totalBarang').text(totalBarang)
-                $('#totalHarga').text(rupiah(totalBarang * harga))
+                if (total_penyaluran > total_pengambilan) {
+                    let td =
+                        `  <th class="text-warning">Ambil dari Gudang</th>
+                                        <th class="text-right text-warning">${total_penyaluran - total_pengambilan}</th>`
+                    $('.stok-gudang').html(td)
+                } else {
+                    let td =
+                        `  <th class="text-success">Simpan ke Gudang</th>
+                                        <th class="text-right text-success">${total_pengambilan - total_penyaluran}</th>`
+                    $('.stok-gudang').html(td)
+                }
+                $('.total-penyaluran').text(total_penyaluran)
+                $('#totalHarga').text(rupiah(total_penyaluran * harga))
 
             }
 
@@ -517,8 +575,8 @@
                     return pangkalan.nama;
                 }
                 var $pangkalan = $(
-                    '<div>' + pangkalan.nama + '</div><div>' +
-                    pangkalan.alamat + '</div><div>'
+                    '<div><b>' + pangkalan.nama + '</b></div><div>' +
+                    pangkalan.alamat + ' | kuota: ' + pangkalan.kuota + '</div><div>'
                 );
                 return $pangkalan;
             };
@@ -552,8 +610,15 @@
             $('select[name="add_penyaluran"]').val('').trigger('change.select2')
 
             $('select[name="add_penyaluran"]').on('select2:select', function(e) {
+
                 let pangkalan = e.params.data;
-                let tr = `<tr>
+                if (total_penyaluran + pangkalan.kuota > total_pengambilan + stok_gudang) {
+                    swal.fire({
+                        icon: 'warning',
+                        title: 'Stok gudang tidak mencukupi!',
+                    })
+                } else {
+                    let tr = `<tr>
                                             <td class="no text-center">1</td>
                                             <td>
                                                 <input type="hidden" name="penyaluran[0][pangkalan_id]" value="${pangkalan.id}">
@@ -569,8 +634,8 @@
                                             </td>
                                             <td class="text-right">
                                                 <input type="number" name="penyaluran[0][jumlah]"
-                                                    onchange="validasiInput(this)" onkeyup="hitungSubtotal(this)"
-                                                    class="form-control text-right" value="${pangkalan.kuota}" min="0">
+                                                   
+                                                    class="form-control text-right" data-kuota="${pangkalan.kuota}" value="${pangkalan.kuota}" min="0">
                                             </td>
                                             <td class="subtotal text-right">
                                                     ${rupiah(pangkalan.kuota * harga)}
@@ -580,13 +645,15 @@
                                                             class="la la-trash"></i></span></button>
                                             </td>
                                         </tr>`
-                if ($('#tb_penyaluran tbody tr.empty-data')) {
-                    $('#tb_penyaluran tbody tr.empty-data').remove()
+                    if ($('#tb_penyaluran tbody tr.empty-data')) {
+                        $('#tb_penyaluran tbody tr.empty-data').remove()
+                    }
+                    $('#tb_penyaluran tbody').append(tr)
+                    reindexPenyaluran()
+                    hitungTotal()
+                    reloadOption()
                 }
-                $('#tb_penyaluran tbody').append(tr)
-                reindexPenyaluran()
-                hitungTotal()
-                reloadOption()
+
                 $(this).val('').trigger('change')
 
             })
@@ -605,8 +672,12 @@
                 reloadOption()
             })
 
-
-
+            $('body').on('change', 'input[name*="jumlah"]', function() {
+                validasiInput(this)
+            })
+            $('body').on('keyup', 'input[name*="jumlah"]', function() {
+                hitungSubtotal(this)
+            })
 
         })
     </script>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Kernet;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,9 @@ class KernetController extends Controller
      */
     public function index()
     {
-        //
+        return view('pages.kernet.index', [
+            'kernets' => Kernet::all(),
+        ]);
     }
 
     /**
@@ -24,7 +27,7 @@ class KernetController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.kernet.create',);
     }
 
     /**
@@ -35,7 +38,15 @@ class KernetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nama' => 'required',
+            'alamat' => 'required',
+            'no_hp' => 'required',
+        ]);
+
+        Kernet::create($validated);
+
+        return to_route('armada.kernet.index')->with('success', 'Kernet berhasil ditambahkan!');
     }
 
     /**
@@ -57,7 +68,9 @@ class KernetController extends Controller
      */
     public function edit(Kernet $kernet)
     {
-        //
+        return view('pages.kernet.edit', [
+            'kernet' => $kernet,
+        ]);
     }
 
     /**
@@ -69,7 +82,15 @@ class KernetController extends Controller
      */
     public function update(Request $request, Kernet $kernet)
     {
-        //
+        $validated = $request->validate([
+            'nama' => 'required',
+            'alamat' => 'required',
+            'no_hp' => 'required',
+        ]);
+
+        $kernet->update($validated);
+
+        return to_route('armada.kernet.index')->with('success', 'Kernet berhasil diperbarui!');
     }
 
     /**
@@ -80,6 +101,17 @@ class KernetController extends Controller
      */
     public function destroy(Kernet $kernet)
     {
-        //
+        try {
+            $kernet->delete();
+            $messaage = 'Kernet berhasil dihapus';
+            $status = 200;
+        } catch (Exception $e) {
+            $messaage = 'Kernet gagal dihapus!';
+            $status = 500;
+        }
+
+        return response()->json([
+            'message' => $messaage
+        ], $status);
     }
 }

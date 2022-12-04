@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+use App\Models\Truk;
 use App\Models\Sopir;
 use App\Models\Sppbe;
-use App\Models\Truk;
 use App\Models\Kernet;
 use App\Models\Pangkalan;
 use App\Models\KuotaHarian;
@@ -20,15 +21,16 @@ class SuratJalanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = [
-            'pengambilans' => Pengambilan::with('kuotaHarian.sa', 'truk')->get()->sortByDesc(function ($query) {
-                return $query->kuotaHarian->tanggal;
-            })
-        ];
-        // dd($data);
-        return view('pages/surat-jalan/index', $data);
+    //    dd($request->only('no_sa', 'tanggal'));
+
+        // $pengambilans = Pengambilan::with('kuotaHarian.sa', 'truk')->filter($request->only('tanggal', 'no_sa'))->orderBy('id')->get()->sortByDesc(function ($query) {
+        //     return $query->kuotaHarian->tanggal;
+        // });
+        $pengambilans = Pengambilan::with('kuotaHarian.sa', 'truk')->filter($request->only('tanggal', 'no_sa', 'start', 'end'))->latest()->get();
+
+        return view('pages.surat-jalan.index', compact('pengambilans'));
     }
 
     /**
@@ -36,10 +38,13 @@ class SuratJalanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         $data = [
-            'truks' => Truk::all(),
+            'sppbe_id' => $request->sppbe_id,
+            'no_sa' => $request->no_sa,
+            'pengambilans' => Pengambilan::all(),
+            'truks' => Truk::orderBy('kode')->get(),
             'sopirs' => Sopir::all(),
             'sppbes' => Sppbe::all(),
             'kernets' => Kernet::all(),
@@ -50,7 +55,7 @@ class SuratJalanController extends Controller
         return view('pages/surat-jalan/create', $data);
     }
 
-    
+
 
     /**
      * Store a newly created resource in storage.
@@ -76,8 +81,6 @@ class SuratJalanController extends Controller
 
         try {
             $pengambilan = Pengambilan::create($validated);
-
-            $pengambilan->kuotaHarian()->decrement('sisa_kuota', 560);
 
             $penyalurans = [];
             foreach ($request->penyaluran as $data) {
@@ -105,7 +108,7 @@ class SuratJalanController extends Controller
             DB::commit();
 
             return to_route('surat-jalan.show', $pengambilan)->with('success', 'Surat Jalan berhasil dibuat!');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
             return to_route('surat-jalan.index')->with('warning', 'Terjadi kesalahan!');;
@@ -121,7 +124,7 @@ class SuratJalanController extends Controller
     public function show(Pengambilan $pengambilan)
     {
         $data = [
-            'pengambilan' => $pengambilan->load('kuotaHarian.sa.sppbe', 'truk', 'penyalurans'),
+            'pengambilan' => $pengambilan->load('kuotaHarian.sa.sppbe', 'truk.sopir', 'truk.kernet', 'penyalurans', 'penukarans'),
         ];
 
         return view('pages/surat-jalan/show', $data);
@@ -137,12 +140,13 @@ class SuratJalanController extends Controller
     {
 
         $data = [
+            'pengambilans' => Pengambilan::all(),
             'sppbes' => Sppbe::all(),
-            'truks' => Truk::all(),
+            'truks' => Truk::orderBy('kode')->get(),
             'sopirs' => Sopir::all(),
             'kernets' => Kernet::all(),
             'pangkalans' => Pangkalan::orderBy('nama')->get(),
-            'pengambilan' => $pengambilan->load('kuotaHarian.sa.sppbe')
+            'pengambilan' => $pengambilan->load('kuotaHarian.sa.sppbe', 'truk.sopir', 'truk.kernet', 'penyalurans', 'penukarans')
         ];
 
         return view('pages/surat-jalan/edit', $data);
@@ -157,7 +161,7 @@ class SuratJalanController extends Controller
      */
     public function update(Request $request, Pengambilan $pengambilan)
     {
-        
+
         $validated = $request->validate(
             [
                 'kuota_harian_id' => 'required',
@@ -169,16 +173,12 @@ class SuratJalanController extends Controller
             ]
         );
 
-        // DB::beginTransaction();
+        DB::beginTransaction();
 
-        // try {
-            $oldKuotaHarian = $pengambilan->kuotaHarian;
+        try {
             $pengambilan->update($validated);
 
-            if ($request->kuota_harian_id != $oldKuotaHarian->id) {
-                $pengambilan->kuotaHarian()->decrement('sisa_kuota', 560);
-                $oldKuotaHarian->increment('sisa_kuota', 560);
-            }
+
 
             $penyalurans = [];
             foreach ($request->penyaluran as $data) {
@@ -206,14 +206,14 @@ class SuratJalanController extends Controller
             }
 
 
-            // DB::commit();
+            DB::commit();
 
-            return to_route('surat-jalan.show', $pengambilan)->with('success', 'Surat Jalan berhasil diubah!');
-        // } catch (\Exception $e) {
-        //     DB::rollBack();
+            return to_route('surat-jalan.show', $pengambilan)->with('success', 'Surat Jalan berhasil diperbarui!');
+        } catch (Exception $e) {
+            DB::rollBack();
 
-        //     return to_route('surat-jalan.show', $pengambilan)->with('warning', 'Surat Jalan gagal diubah!');
-        // }
+            return to_route('surat-jalan.show', $pengambilan)->with('warning', 'Surat Jalan gagal diperbarui!');
+        }
     }
 
     /**
@@ -222,9 +222,20 @@ class SuratJalanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Pengambilan $pengambilan)
     {
-        //
+        try {
+            $pengambilan->delete();
+            $messaage = 'Surat Jalan berhasil dihapus';
+            $status = 200;
+        } catch (Exception $e) {
+            $messaage = 'Surat Jalan gagal dihapus!';
+            $status = 500;
+        }
+
+        return response()->json([
+            'message' => $messaage
+        ], $status);
     }
 
     public function print(Pengambilan $pengambilan)

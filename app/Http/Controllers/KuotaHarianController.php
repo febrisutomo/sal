@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Sa;
 use Carbon\Carbon;
 use App\Models\Sppbe;
@@ -32,13 +33,7 @@ class KuotaHarianController extends Controller
      */
     public function create()
     {
-        $data = [
-            'sppbes' => Sppbe::orderBy('nama')->get(),
-            'kuota_harians' => KuotaHarian::with('sa.sppbe')->orderBy('tanggal')->get(),
-
-        ];
-        // dd($data);
-        return view('pages/kitir/create', $data);
+      //
     }
 
     /**
@@ -57,17 +52,16 @@ class KuotaHarianController extends Controller
                 'kuota' => 'required',
             ],
             [
-                'kuota.required'  => 'Kuota harus diisi.',
+                'kuota.required'  => 'Kuota harian harus diisi.',
             ]
         );
 
-        $validated['sisa_kuota'] = $validated['kuota'];
 
         KuotaHarian::create($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Kuota berhasil ditambahkan!',
+            'message' => 'Kuota harian berhasil ditambahkan!',
         ]);
 
         // dd($request->data);
@@ -105,20 +99,21 @@ class KuotaHarianController extends Controller
      */
     public function update(Request $request, KuotaHarian $kuotaHarian)
     {
-        $request->validate(
+        $validated = $request->validate(
             [
                 'kuota' => 'required',
             ],
             [
-                'kuota.required'  => 'Kuota harus diisi.',
+                'kuota.required'  => 'Kuota harian harus diisi.',
             ]
         );
 
-        $kuotaHarian->update(['kuota' => $request->kuota, 'sisa_kuota' => $request->kuota]);
+
+        $kuotaHarian->update($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Kuota berhasil diubah!',
+            'message' => 'Kuota harian berhasil diperbarui!',
         ]);
     }
 
@@ -130,12 +125,19 @@ class KuotaHarianController extends Controller
      */
     public function destroy(KuotaHarian $kuotaHarian)
     {
-        $kuotaHarian->delete();
+        try {
+            $kuotaHarian->delete();
+
+            $messaage = 'Kuota harian berhasil dihapus';
+            $status = 200;
+        } catch (Exception $e) {
+            $messaage = 'Kuota harian sudah digunakan!';
+            $status = 500;
+        }
 
         return response()->json([
-            'success' => true,
-            'message' => 'Kuota berhasil dihapus!'
-        ]);
+            'message' => $messaage
+        ], $status);
     } 
 
     public function getSA(Request $request)

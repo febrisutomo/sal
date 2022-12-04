@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Truk;
 use App\Models\Sopir;
 use App\Models\Kernet;
@@ -68,7 +69,6 @@ class TrukController extends Controller
      */
     public function show(Truk $truk)
     {
-       
     }
 
     /**
@@ -79,6 +79,7 @@ class TrukController extends Controller
      */
     public function edit(Truk $truk)
     {
+        // dd($truk);
         $data = [
             'truk' => $truk,
             'sopirs' => Sopir::all(),
@@ -98,9 +99,9 @@ class TrukController extends Controller
     public function update(Request $request, Truk $truk)
     {
         $validated = $request->validate([
-            'kode' => 'required|unique:truks,kode,'.$truk->id,
+            'kode' => 'required|unique:truks,kode,' . $truk->id,
             'merk' => 'required',
-            'plat_nomor' => 'required|unique:truks,plat_nomor,'.$truk->id,
+            'plat_nomor' => 'required|unique:truks,plat_nomor,' . $truk->id,
             'kapasitas' => 'required',
             'sopir_id' => 'required',
             'kernet_id' => 'required',
@@ -108,7 +109,7 @@ class TrukController extends Controller
 
         $truk->update($validated);
 
-        return to_route('armada.truk.index')->with('success', 'Truk berhasil diubah!');
+        return to_route('armada.truk.index')->with('success', 'Truk berhasil diperbarui!');
     }
 
     /**
@@ -119,11 +120,18 @@ class TrukController extends Controller
      */
     public function destroy(Truk $truk)
     {
-        $truk->delete();
+
+        try {
+            $truk->delete();
+            $messaage = 'Truk berhasil dihapus';
+            $status = 200;
+        } catch (Exception $e) {
+            $messaage = 'Truk gagal dihapus!';
+            $status = 500;
+        }
 
         return response()->json([
-            'success' => true,
-            'message' => 'Truk berhasil dihapus!'
-        ]);
+            'message' => $messaage
+        ], $status);
     }
 }

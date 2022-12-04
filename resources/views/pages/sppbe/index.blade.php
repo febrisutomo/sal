@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'SP(P)BE'])
 
 @section('content')
     <div class="container-fluid">
@@ -6,7 +6,7 @@
             <h4 class="page-title">SP(P)BE</h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
-                    <a href="#">
+                    <a href="{{ route('dashboard') }}">
                         <i class="la la-home"></i>
                     </a>
                 </li>
@@ -24,7 +24,7 @@
             </li> --}}
             </ul>
             <div class="ml-auto">
-                <div class="dropdown d-inline-block mr-1">
+                <div class="dropdown d-inline-block mr-2">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="btn-label"><i class="la la-cloud-upload mr-1"></i></span>Export
@@ -49,15 +49,15 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered data-table">
+                            <table id="tbSppbe" class="table table-bordered data-table">
                                 <thead>
                                     <tr>
                                         <th class="text-center" style="width: 40px">No.</th>
                                         <th>Nama</th>
                                         <th>No. SH</th>
                                         <th>No. Plant</th>
-                                        <th style="width: 200px">Alamat</th>
-                                        <th style="width: 60px">Aksi</th>
+                                        <th style="width: 240px">Alamat</th>
+                                        <th style="width: 80px">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -69,28 +69,17 @@
                                             <td>{{ $sppbe->plant }}</td>
                                             <td>{{ $sppbe->alamat }}</td>
                                             <td class="text-center">
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm dropdown-toggle" type="button"
-                                                        data-toggle="dropdown">
-                                                        Aksi
-                                                    </button>
-                                                    <div class="dropdown-menu dropdown-menu-right" role="menu"
-                                                        aria-labelledby="dropdownMenu">
+                                                <a href="{{ route('sppbe.edit', $sppbe) }}" data-toggle="tooltip"
+                                                    title="" class="btn btn-link btn-primary px-2"
+                                                    data-original-title="Edit"><span class="btn-label"><i
+                                                            class="la la-edit"></i></span>
 
-                                                        <a class="dropdown-item edit-sppbe"
-                                                            href="{{ route('sppbe.edit', $sppbe) }}"><i
-                                                                class="la la-edit mr-1"></i>Edit</a>
-                                                        {{-- <a class="dropdown-item"
-                                                            href="{{ route('sppbe.print', $sppbe) }}"><i
-                                                                class="la la-print mr-1"></i>Print</a>
-                                                        <div class="dropdown-divider"></div> --}}
-                                                        <a class="dropdown-item delete-sppbe text-danger" href="#"
-                                                            data-sppbe='@json($sppbe)'><i
-                                                                class="la la-trash mr-1"></i>Hapus</a>
-
-                                                    </div>
-
-                                                </div>
+                                                </a>
+                                                <button type="button" data-toggle="tooltip" title=""
+                                                    class="btn btn-link btn-danger delete-sppbe px-2"
+                                                    data-sppbe='@json($sppbe)' data-original-title="Hapus">
+                                                    <span class="btn-label"><i class="la la-trash"></i></span>
+                                                </button>
 
                                             </td>
                                         </tr>
@@ -112,9 +101,9 @@
     <script>
         $(document).ready(function() {
             $('body').on('click', '.delete-sppbe', function(e) {
-                e.stopPropagation()
+                e.preventDefault()
                 swal.fire({
-                    title: 'Apakah anda yakin?',
+                    title: 'Anda yakin ingin menghapus ini?',
                     text: $(this).data('sppbe').nama,
                     icon: 'warning',
                     showCancelButton: true,
@@ -127,17 +116,32 @@
                             url: window.location.origin + '/sppbe/' + id,
                             type: 'delete',
                             success: function(response) {
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: response.message,
-                                }).then(function() {
-                                    location.reload()
+                                toastr.success(
+                                    response.message,
+                                    'Success', {
+                                        timeOut: 1000,
+                                        fadeOut: 1000,
+                                        onHidden: function() {
+                                            window.location.reload()
+                                        }
+                                    }
+                                );
+                            },
+                            error: function(jqXHR) {
+                                swal.fire({
+                                    title: 'Error',
+                                    text: jqXHR
+                                        .responseJSON.message,
+                                    icon: 'warning',
                                 })
-                            }
+
+                            },
                         })
                     }
                 })
             })
+
+            tableExport('#tbSppbe')
         })
     </script>
 @endpush

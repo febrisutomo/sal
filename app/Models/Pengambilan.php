@@ -39,6 +39,7 @@ class Pengambilan extends Model
         return $this->belongsTo(Kernet::class);
     }
 
+
     public function kuotaHarian()
     {
         return $this->belongsTo(KuotaHarian::class);
@@ -58,11 +59,38 @@ class Pengambilan extends Model
         return $this->hasMany(Penukaran::class);
     }
 
-
-    public function totalPenyaluran(): Attribute
+    public function getTotalPenukaranAttribute()
     {
-        return new Attribute(
-            get: fn () => $this->penyalurans->sum('pivot.kuantitas'),
-        );
+        return $this->penukarans->count();
     }
+
+    public function getTotalPenyaluranAttribute()
+    {
+        return $this->penyalurans->sum('pivot.kuantitas');
+    }
+
+    public function scopeFilter($query, $filter)
+    {
+        return $query->when($filter['no_sa'] ?? false, function ($query, $no_sa) {
+            $query->whereRelation('kuotaHarian.sa', 'no_sa', $no_sa);
+        })->when($filter['tanggal'] ?? false, function ($query, $tanggal) {
+            $query->whereRelation('kuotaHarian', 'tanggal', $tanggal);
+        })->when($filter['start'] ?? false, function ($query, $tanggal) {
+            $query->whereRelation('kuotaHarian', 'tanggal', '>=', $tanggal);
+        })->when($filter['end'] ?? false, function ($query, $tanggal) {
+            $query->whereRelation('kuotaHarian', 'tanggal', '<=', $tanggal);
+        });
+
+        // $filter['start'] = $filter['start'] ?? '';
+        // $filter['end'] = $filter['end'] ?? '';
+
+        // if ( $filter['start'] != '' && $filter['end'] != '' ) {
+        //     $query->whereHas('kuotaHarian', function($query) use($filter){
+        //         $query->whereBetween('tanggal', [$filter['start'], $filter['end']]);
+        //     });
+        // }
+
+    }
+
+    
 }

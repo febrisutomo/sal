@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'Sopir'])
 
 @section('content')
     <div class="container-fluid">
@@ -6,7 +6,7 @@
             <h4 class="page-title">Sopir</h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
-                    <a href="#">
+                    <a href="{{ route('dashboard') }}">
                         <i class="la la-home"></i>
                     </a>
                 </li>
@@ -24,7 +24,7 @@
                 </li>
             </ul>
             <div class="ml-auto">
-                <div class="dropdown d-inline-block mr-1">
+                <div class="dropdown d-inline-block mr-2">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="btn-label"><i class="la la-cloud-upload mr-1"></i></span>Export
@@ -49,7 +49,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered data-table">
+                            <table id="tbSopir" class="table table-bordered data-table">
                                 <thead>
                                     <tr>
 
@@ -57,39 +57,29 @@
                                         <th>Nama</th>
                                         <th>No. HP</th>
                                         <th>Alamat</th>
-                                        <th style="width: 100px">Aksi</th>
+                                        <th style="width: 80px">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($sopirs as $sopir)
                                         <tr>
                                             <td class="text-center">{{ $loop->iteration }}</td>
-                                            <td>{{ $sopir->nama}}</td>
+                                            <td>{{ $sopir->nama }}</td>
                                             <td>{{ $sopir->no_hp }}</td>
                                             <td>{{ $sopir->alamat }}</td>
                                             <td class="text-center">
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm dropdown-toggle" type="button"
-                                                        data-toggle="dropdown">
-                                                        Aksi
-                                                    </button>
-                                                    <div class="dropdown-menu dropdown-menu-right" role="menu"
-                                                        aria-labelledby="dropdownMenu">
+                                                <a href="{{ route('armada.sopir.edit', $sopir) }}" data-toggle="tooltip"
+                                                    title="" class="btn btn-link btn-primary px-2"
+                                                    data-original-title="Edit"><span class="btn-label"><i
+                                                            class="la la-edit"></i></span>
 
-                                                        <a class="dropdown-item"
-                                                            href="{{ route('armada.sopir.edit', $sopir) }}"><i
-                                                                class="la la-edit mr-1"></i>Edit</a>
-                                                        {{-- <a class="dropdown-item"
-                                                            href="{{ route('armada.sopir.print', $sopir) }}"><i
-                                                                class="la la-print mr-1"></i>Print</a>
-                                                        <div class="dropdown-divider"></div> --}}
-                                                        <a class="dropdown-item delete-sopir text-danger" href="#"
-                                                            data-sopir='@json($sopir)'><i
-                                                                class="la la-trash mr-1"></i>Hapus</a>
+                                                </a>
+                                                <button type="button" data-toggle="tooltip" title=""
+                                                    class="btn btn-link btn-danger delete-sopir px-2"
+                                                    data-sopir='@json($sopir)' data-original-title="Hapus">
+                                                    <span class="btn-label"><i class="la la-trash"></i></span>
+                                                </button>
 
-                                                    </div>
-
-                                                </div>
 
                                             </td>
                                         </tr>
@@ -109,9 +99,9 @@
     <script>
         $(document).ready(function() {
             $('body').on('click', '.delete-sopir', function(e) {
-                e.stopPropagation()
+                e.preventDefault()
                 swal.fire({
-                    title: 'Apakah anda yakin?',
+                    title: 'Anda yakin ingin menghapus ini?',
                     text: 'Nama: ' + $(this).data('sopir').nama,
                     icon: 'warning',
                     showCancelButton: true,
@@ -124,17 +114,31 @@
                             url: window.location.origin + '/sopir/' + id,
                             type: 'delete',
                             success: function(response) {
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: response.message,
-                                }).then(function() {
-                                    location.reload()
+                                toastr.success(
+                                    response.message,
+                                    'Success', {
+                                        timeOut: 1000,
+                                        fadeOut: 1000,
+                                        onHidden: function() {
+                                            window.location.reload()
+                                        }
+                                    }
+                                );
+                            },
+                            error: function(jqXHR) {
+                                swal.fire({
+                                    title: 'Error',
+                                    text: jqXHR
+                                        .responseJSON.message,
+                                    icon: 'warning',
                                 })
-                            }
+
+                            },
                         })
                     }
                 })
             })
+            tableExport('#tbSopir')
         })
     </script>
 @endpush

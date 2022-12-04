@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'Edit Pangkalan'])
 
 @section('content')
     <div class="container-fluid">
@@ -6,7 +6,7 @@
             <h4 class="page-title">Edit Pangkalan</h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
-                    <a href="#">
+                    <a href="{{ route('dashboard') }}">
                         <i class="la la-home"></i>
                     </a>
                 </li>

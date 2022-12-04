@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'Edit Kitir'])
 
 @section('content')
     <div class="data" data-kitir='@json($kitir)'></div>
@@ -7,7 +7,7 @@
             <h4 class="page-title">Edit Kitir</h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
-                    <a href="#">
+                    <a href="{{ route('dashboard') }}">
                         <i class="la la-home"></i>
                     </a>
                 </li>
@@ -26,7 +26,7 @@
             </ul>
             <div class="ml-auto">
                 <a href="{{ route('kitir.print', $kitir) }}" target="_blank" class="btn btn-secondary">
-                    <span class="btn-label"><i class="la la-print mr-1"></i></span>
+                    <span class="btn-label"><i class="la la-print mr-2"></i></span>
                     Print
                 </a>
                 {{-- <a href="{{route('kitir.rdit', $kitir)}}" class="btn btn-primary">
@@ -50,7 +50,7 @@
                             @endphp
                             <h6>Minggu ke-{{ $loop->iteration }}</h6>
                             <div class="table-responsive">
-                                <table class="table table-bordered table-sm mb-3" style="width: fit-content">
+                                <table class="table table-bordered  table-sm mb-3 tb-striped" style="width: fit-content">
                                     <thead>
                                         <tr>
                                             <th class="text-center" style="width: 40px">No.</th>
@@ -65,8 +65,9 @@
                                             @endif
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @foreach ($sppbes as $sppbe)
+
+                                    @foreach ($sppbes as $sppbe)
+                                        <tbody>
                                             @php
                                                 $sas = $kitir->sas->where('sppbe_id', $sppbe->id)->sortBy('tipe');
                                             @endphp
@@ -79,17 +80,20 @@
                                                 <td class="no-sa" style="cursor: pointer; position: relative;">
                                                     @if ($sas->count())
                                                         <div class="{{ $sas->first()->tipe == 'tambahan' ? 'text-danger' : '' }}"
-                                                            style="margin-right:56px">
+                                                            style="margin-right:56px" data-toggle="tooltip" title=""
+                                                            data-original-title="Ubah">
                                                             {{ $sas->first()->no_sa }}
                                                         </div>
                                                         <div class="btn-action">
                                                             @if ($sas->count() == 1)
                                                                 <button class="btn btn-link add-sa d-block"
-                                                                    title="tambah"><span class="btn-label"><i
+                                                                    data-toggle="tooltip" title=""
+                                                                    data-original-title="Tambah"><span class="btn-label"><i
                                                                             class="la la-plus"></span></i></button>
                                                             @endif
                                                             <button class="btn btn-link text-danger delete-sa d-block"
-                                                                title="hapus"><span class="btn-label"><i
+                                                                data-toggle="tooltip" title=""
+                                                                data-original-title="Hapus"><span class="btn-label"><i
                                                                         class="la la-trash"></span></i></button>
 
                                                         </div>
@@ -106,13 +110,17 @@
                                                     <td class="text-right  {{ $day == null ? 'bg-light' : '' }} {{ $day != null && $loop->iteration != 1 ? 'kuota' : '' }}"
                                                         style="position:relative; {{ $day != null && $loop->iteration != 1 ? 'cursor:pointer' : '' }}"
                                                         data-tanggal="{{ $kitir->bulan_tahun . '-' . str_pad($day, 2, '0', STR_PAD_LEFT) }}"
-                                                        data-kitir='@json($kuotaHarian)'>
-                                                        <div style="margin-right:24px">{{ $kuotaHarian?->kuota }}</div>
+                                                        data-kuota='@json($kuotaHarian)'
+                                                        data-selector="{{ $sas->first()?->id }}-{{ $day }}">
+                                                        <div class="kuota-data" style="margin-right:24px"  data-toggle="tooltip" title=""
+                                                        data-original-title="Ubah">
+                                                            {{ $kuotaHarian?->kuota }}</div>
 
                                                         @if ($kuotaHarian)
                                                             <div class="btn-action">
                                                                 <button class="btn  btn-link text-danger delete-kuota"
-                                                                    title="hapus"><span class="btn-label"><i
+                                                                    data-toggle="tooltip" title=""
+                                                                    data-original-title="Hapus"><span class="btn-label"><i
                                                                             class="la la-trash"></span></i></button>
                                                             </div>
                                                         @endif
@@ -129,21 +137,24 @@
                                                 <tr data-sppbe='@json($sppbe)'
                                                     data-sa='@json($sas->last())'
                                                     data-count="{{ $sas->count() }}">
-                                                    <td class="no-sa" style="cursor: pointer; position: relative;"
-                                                        style="margin-right:56px">
+                                                    <td class="no-sa" style="cursor: pointer; position: relative;">
                                                         @if ($sas->count())
                                                             <div
-                                                                class="{{ $sas->last()->tipe == 'tambahan' ? 'text-danger' : '' }}">
+                                                                class="{{ $sas->last()->tipe == 'tambahan' ? 'text-danger' : '' }}" style="margin-right:56px" data-toggle="tooltip" title=""
+                                                                data-original-title="Ubah">
                                                                 {{ $sas->last()->no_sa }}
                                                             </div>
                                                             <div class="btn-action">
                                                                 @if ($sas->count() == 1)
                                                                     <button class="btn  btn-link add-sa d-block"
-                                                                        title="tambah"><span class="btn-label"><i
+                                                                        data-toggle="tooltip" title=""
+                                                                        data-original-title="Tambah"><span
+                                                                            class="btn-label"><i
                                                                                 class="la la-plus"></span></i></button>
                                                                 @endif
                                                                 <button class="btn btn-link text-danger delete-sa d-block"
-                                                                    title="hapus"><span class="btn-label"><i
+                                                                    data-toggle="tooltip" title=""
+                                                                    data-original-title="Hapus"><span class="btn-label"><i
                                                                             class="la la-trash"></span></i></button>
 
                                                             </div>
@@ -160,12 +171,17 @@
                                                         <td class="text-right  {{ $day == null ? 'bg-light' : '' }} {{ $day != null && $loop->iteration != 1 ? 'kuota' : '' }} "
                                                             style="position:relative; {{ $day != null && $loop->iteration != 1 ? 'cursor:pointer' : '' }}"
                                                             data-tanggal="{{ $kitir->bulan_tahun . '-' . str_pad($day, 2, '0', STR_PAD_LEFT) }}"
-                                                            data-kitir='@json($kuotaHarian)'>
-                                                            <div style="margin-right:24px">{{ $kuotaHarian?->kuota }}</div>
+                                                            data-kuota='@json($kuotaHarian)'
+                                                            data-selector="{{ $sas->last()?->id }}-{{ $day }}">
+                                                            <div class="kuota-data" style="margin-right:24px" data-toggle="tooltip" title=""
+                                                            data-original-title="Ubah">
+                                                                {{ $kuotaHarian?->kuota }}</div>
                                                             @if ($kuotaHarian)
                                                                 <div class="btn-action">
                                                                     <button class="btn btn-link text-danger delete-kuota"
-                                                                        title="hapus"><span class="btn-label"><i
+                                                                        data-toggle="tooltip" title=""
+                                                                        data-original-title="Hapus"><span
+                                                                            class="btn-label"><i
                                                                                 class="la la-trash"></span></i></button>
                                                                 </div>
                                                             @endif
@@ -178,8 +194,8 @@
                                                     @endif
                                                 </tr>
                                             @endif
-                                        @endforeach
-                                    </tbody>
+                                        </tbody>
+                                    @endforeach
                                     <tfoot>
                                         <tr>
                                             <th colspan="3">
@@ -268,6 +284,7 @@
     </div>
 @endsection
 
+
 @push('script')
     <script>
         $(document).ready(function() {
@@ -346,12 +363,16 @@
                     },
                     success: function(response) {
                         $('#modalNoSA').modal('hide')
-                        Toast.fire({
-                            icon: 'success',
-                            title: response.message,
-                        }).then(function() {
-                            location.reload()
-                        })
+                        toastr.success(
+                            response.message,
+                            'Success', {
+                                timeOut: 1000,
+                                fadeOut: 1000,
+                                onHidden: function() {
+                                    window.location.reload();
+                                }
+                            }
+                        );
 
                     },
                     error: function(jqXHR) {
@@ -361,8 +382,6 @@
                                 title: 'Session Expired',
                                 text: 'Silahkan login kembali!',
                                 icon: 'warning',
-                            }).then((result) => {
-                                location.reload()
                             })
                         }
                         $('#modalNoSA .feedback').addClass('invalid-feedback').text(jqXHR
@@ -385,7 +404,7 @@
             $('.delete-sa').on('click', function(e) {
                 e.stopPropagation()
                 swal.fire({
-                    title: 'Apakah anda yakin?',
+                    title: 'Anda yakin ingin menghapus ini?',
                     text: 'No. SA : ' + $(this).closest('tr').data('sa').no_sa,
                     icon: 'warning',
                     showCancelButton: true,
@@ -400,12 +419,25 @@
                             url: window.location.origin + '/sa/' + id,
                             type: 'delete',
                             success: function(response) {
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: response.message,
-                                }).then(function() {
-                                    location.reload()
+                                toastr.success(
+                                    response.message,
+                                    'Success', {
+                                        timeOut: 1000,
+                                        fadeOut: 1000,
+                                        onHidden: function() {
+                                            window.location.reload();
+                                        }
+                                    }
+                                );
+                            },
+                            error: function(jqXHR) {
+                                swal.fire({
+                                    title: 'Error',
+                                    text: jqXHR
+                                        .responseJSON.message,
+                                    icon: 'warning',
                                 })
+
                             }
                         })
                     }
@@ -418,14 +450,17 @@
             $('.kuota').on('click', function() {
                 let sa = $(this).parent().data('sa')
                 let sppbe = $(this).parent().data('sppbe')
-                let kitir = $(this).data('kitir')
+                let kuota = $(this).data('kuota')
                 let tanggal = $(this).data('tanggal')
+
+                let selector = $(this).data('selector')
 
                 if (sa) {
                     $('#modalKuota').modal('show')
                     $('#modalKuota').data('sa-id', sa.id)
-                    $('#modalKuota').data('id', kitir ? kitir.id : '')
+                    $('#modalKuota').data('id', kuota ? kuota.id : '')
                     $('#modalKuota').data('tanggal', tanggal)
+                    $('#modalKuota').data('selector', selector)
                     $('#modalKuota .modal-title').text(sppbe.kode + ' (' + new Date(tanggal)
                         .toLocaleDateString('id-ID', {
                             year: 'numeric',
@@ -458,8 +493,13 @@
                 $('#modalKuota input').removeClass('is-invalid')
                 $('#modalKuota button[type=submit]').prop('disabled', true).text('Menyimpan...')
 
+                let selector = $('#modalKuota').data('selector')
+
                 let id = $('#modalKuota').data('id')
                 let url = window.location.origin + '/kuota-harian/'
+                let tanggal = $('#modalKuota').data('tanggal')
+                let kuota = $('#modalKuota input').val()
+                let sa_id = $('#modalKuota').data('sa-id')
                 let type = 'POST'
 
                 if (id != '') {
@@ -471,18 +511,22 @@
                     url: url,
                     type: type,
                     data: {
-                        sa_id: $('#modalKuota').data('sa-id'),
-                        kuota: $('#modalKuota input').val(),
-                        tanggal: $('#modalKuota').data('tanggal')
+                        sa_id: sa_id,
+                        kuota: kuota,
+                        tanggal: tanggal
                     },
                     success: function(response) {
                         $('#modalKuota').modal('hide')
-                        Toast.fire({
-                            icon: 'success',
-                            title: response.message,
-                        }).then(function() {
-                            location.reload()
-                        })
+                        toastr.success(
+                            response.message,
+                            'Success', {
+                                timeOut: 1000,
+                                fadeOut: 1000,
+                                onHidden: function() {
+                                    window.location.reload();
+                                }
+                            }
+                        );
 
                     },
                     error: function(jqXHR) {
@@ -492,8 +536,6 @@
                                 title: 'Session Expired',
                                 text: 'Silahkan login kembali!',
                                 icon: 'warning',
-                            }).then((result) => {
-                                location.reload()
                             })
                         }
                         $('#modalKuota .feedback').addClass('invalid-feedback').text(jqXHR
@@ -518,22 +560,37 @@
 
             $('.delete-kuota').on('click', function(e) {
                 e.stopPropagation()
-                let id = $(this).parent().parent().data('kitir').id
+                let id = $(this).parent().parent().data('kuota').id
                 $.ajax({
                     url: window.location.origin + '/kuota-harian/' + id,
                     type: 'delete',
                     success: function(response) {
-                        Toast.fire({
-                            icon: 'success',
-                            title: response.message,
-                        }).then(function() {
-                            location.reload()
+                        toastr.success(
+                            response.message,
+                            'Success', {
+                                timeOut: 1000,
+                                fadeOut: 1000,
+                                onHidden: function() {
+                                    window.location.reload();
+                                }
+                            }
+                        );
+
+                    },
+                    error: function(jqXHR) {
+                        swal.fire({
+                            title: 'Error',
+                            text: jqXHR
+                                .responseJSON.message,
+                            icon: 'warning',
                         })
+
                     }
                 })
 
 
             })
+
 
 
 
@@ -544,6 +601,20 @@
 
 @push('style')
     <style>
+        
+
+        .tb-striped tbody:nth-child(even) {
+            background-color: #b7dfff;
+        }
+
+        .tb-striped tbody:nth-child(odd) {
+            background-color: #ffbdfc;
+        }
+
+        .tb-striped tr:nth-child(even) {
+            background-color: #fffc5d;
+        }
+
 
         .btn-action {
             height: fit-content;

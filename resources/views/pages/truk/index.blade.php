@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'Truk'])
 
 @section('content')
     <div class="container-fluid">
@@ -6,7 +6,7 @@
             <h4 class="page-title">Truk</h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
-                    <a href="#">
+                    <a href="{{ route('dashboard') }}">
                         <i class="la la-home"></i>
                     </a>
                 </li>
@@ -20,11 +20,11 @@
                     <i class="la la-angle-right"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="#">Truk</a>
+                    <a href="">Truk</a>
                 </li>
             </ul>
             <div class="ml-auto">
-                <div class="dropdown d-inline-block mr-1">
+                <div class="dropdown d-inline-block mr-2">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="btn-label"><i class="la la-cloud-upload mr-1"></i></span>Export
@@ -49,17 +49,17 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered data-table">
+                            <table id="tbTruk" class="table table-bordered data-table">
                                 <thead>
                                     <tr>
 
                                         <th class="text-center" style="width: 40px">No.</th>
                                         <th>Kode</th>
                                         <th>Plat Nomor</th>
-                                    <th>Merk / Type</th>
+                                        <th>Merk / Type</th>
                                         <th>Sopir</th>
                                         <th>Kernet</th>
-                                        <th style="width: 100px">Aksi</th>
+                                        <th style="width: 80px">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -69,31 +69,20 @@
                                             <td>{{ $truk->kode }}</td>
                                             <td>{{ $truk->plat_nomor }}</td>
                                             <td>{{ $truk->merk }}</td>
-                                            <td>{{ $truk->sopir->nama }}</td>
-                                            <td>{{ $truk->kernet->nama }}</td>
+                                            <td><a href="{{ route('armada.sopir.edit', $truk->sopir ) }}">{{ $truk->sopir->nama }}</a></td>
+                                            <td><a href="{{ route('armada.kernet.edit', $truk->kernet ) }}">{{ $truk->kernet->nama }}</td>
                                             <td class="text-center">
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm dropdown-toggle" type="button"
-                                                        data-toggle="dropdown">
-                                                        Aksi
-                                                    </button>
-                                                    <div class="dropdown-menu dropdown-menu-right" role="menu"
-                                                        aria-labelledby="dropdownMenu">
+                                                <a href="{{ route('armada.truk.edit', $truk) }}" data-toggle="tooltip"
+                                                    title="" class="btn btn-link btn-primary px-2"
+                                                    data-original-title="Edit"><span class="btn-label"><i
+                                                            class="la la-edit"></i></span>
 
-                                                        <a class="dropdown-item edit-truk"
-                                                            href="{{ route('armada.truk.edit', $truk) }}"><i
-                                                                class="la la-edit mr-1"></i>Edit</a>
-                                                        {{-- <a class="dropdown-item"
-                                                            href="{{ route('armada.truk.print', $truk) }}"><i
-                                                                class="la la-print mr-1"></i>Print</a>
-                                                        <div class="dropdown-divider"></div> --}}
-                                                        <a class="dropdown-item delete-truk text-danger" href="#"
-                                                            data-truk='@json($truk)'><i
-                                                                class="la la-trash mr-1"></i>Hapus</a>
-
-                                                    </div>
-
-                                                </div>
+                                                </a>
+                                                <button type="button" data-toggle="tooltip" title=""
+                                                    class="btn btn-link btn-danger delete-truk px-2"
+                                                    data-truk='@json($truk)' data-original-title="Hapus">
+                                                    <span class="btn-label"><i class="la la-trash"></i></span>
+                                                </button>
 
                                             </td>
                                         </tr>
@@ -115,7 +104,7 @@
             $('body').on('click', '.delete-truk', function(e) {
                 e.stopPropagation()
                 swal.fire({
-                    title: 'Apakah anda yakin?',
+                    title: 'Anda yakin ingin menghapus ini?',
                     text: $(this).data('truk').kode,
                     icon: 'warning',
                     showCancelButton: true,
@@ -128,17 +117,32 @@
                             url: window.location.origin + '/truk/' + id,
                             type: 'delete',
                             success: function(response) {
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: response.message,
-                                }).then(function() {
-                                    location.reload()
+                                toastr.success(
+                                    response.message,
+                                    'Success', {
+                                        timeOut: 1000,
+                                        fadeOut: 1000,
+                                        onHidden: function() {
+                                            window.location.reload()
+                                        }
+                                    }
+                                );
+                            },
+                            error: function(jqXHR) {
+                                swal.fire({
+                                    title: 'Error',
+                                    text: jqXHR
+                                        .responseJSON.message,
+                                    icon: 'warning',
                                 })
-                            }
+
+                            },
                         })
                     }
                 })
             })
+
+            tableExport('#tbTruk')
         })
     </script>
 @endpush

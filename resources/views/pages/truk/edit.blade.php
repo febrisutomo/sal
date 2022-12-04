@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'Edit Truk'])
 
 @section('content')
     <div class="container-fluid">
@@ -6,7 +6,7 @@
             <h4 class="page-title">Edit Truk</h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
-                    <a href="#">
+                    <a href="{{ route('dashboard') }}">
                         <i class="la la-home"></i>
                     </a>
                 </li>
@@ -82,7 +82,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group form-show-validation">
                                         <label for="kapasitas" class="required">Kapasitas</label>
-                                        <input type="text" class="form-control @error('kapasitas') is-invalid @enderror"
+                                        <input type="number" class="form-control @error('kapasitas') is-invalid @enderror"
                                             id="kapasitas" name="kapasitas" placeholder="Masukkan Kapasitas"
                                             value="{{ old('kapasitas', $truk->kapasitas) }}" required>
                                         @error('kapasitas')

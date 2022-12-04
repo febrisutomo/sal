@@ -96,7 +96,7 @@ class PangkalanController extends Controller
 
         $pangkalan->update($validated);
 
-        return to_route('pangkalan.index')->with('success', 'Pangkalan berhasil diubah!');
+        return to_route('pangkalan.index')->with('success', 'Pangkalan berhasil diperbarui!');
     }
 
     /**

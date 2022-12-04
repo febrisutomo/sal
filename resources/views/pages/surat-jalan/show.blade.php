@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'Detail Surat Jalan'])
 
 @section('content')
 
@@ -7,7 +7,7 @@
             <h4 class="page-title">Detail Surat Jalan</h4>
             <ul class="breadcrumbs">
                 <li class="nav-home">
-                    <a href="#">
+                    <a href="{{route('dashboard')}}">
                         <i class="la la-home"></i>
                     </a>
                 </li>
@@ -15,7 +15,7 @@
                     <i class="la la-angle-right"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="#">Surat Jalan</a>
+                    <a href="{{route('surat-jalan.index')}}">Surat Jalan</a>
                 </li>
                 <li class="separator">
                     <i class="la la-angle-right"></i>
@@ -26,7 +26,7 @@
             </ul>
             <div class="ml-auto">
 
-                <a href="{{ route('surat-jalan.print', $pengambilan) }}" target="_blank" class="btn btn-secondary mr-1">
+                <a href="{{ route('surat-jalan.print', $pengambilan) }}" target="_blank" class="btn btn-secondary mr-2">
                     <span class="btn-label"><i class="la la-print mr-1"></i></span>
                     Print
                 </a>
@@ -346,7 +346,7 @@
                                         <div>Agen PT. SERAYU AGUNG LESTARI</div>
                                         <div>Manager / Admin</div>
                                         <div><img src="{{asset('img/ttd-yuli.jpg')}}" width="120px"></div>
-                                        <div><u>DWI YULIARTO</u></div>
+                                        <div class="text-uppercase"><u>{{ Setting::get()->nama_manager }}</u></div>
                                     </div>
                                 </div>
                             </div>

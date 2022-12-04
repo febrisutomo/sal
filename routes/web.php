@@ -6,14 +6,19 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TrukController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\KitirController;
 use App\Http\Controllers\SopirController;
 use App\Http\Controllers\SppbeController;
 use App\Http\Controllers\KernetController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\DropzoneController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PangkalanController;
 use App\Http\Controllers\SuratJalanController;
 use App\Http\Controllers\KuotaHarianController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,19 +31,17 @@ use App\Http\Controllers\KuotaHarianController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Auth::routes();
 
 Route::middleware('auth')->group(function () {
-    Route::get('surat-jalan', [SuratJalanController::class, 'index'])->name('surat-jalan.index');
-    Route::get('surat-jalan/create', [SuratJalanController::class, 'create'])->name('surat-jalan.create');
-    Route::post('surat-jalan', [SuratJalanController::class, 'store'])->name('surat-jalan.store');
-    Route::get('surat-jalan/{pengambilan}', [SuratJalanController::class, 'show'])->name('surat-jalan.show');
-    Route::get('surat-jalan/{pengambilan}/edit', [SuratJalanController::class, 'edit'])->name('surat-jalan.edit');
-    Route::put('surat-jalan/{pengambilan}', [SuratJalanController::class, 'update'])->name('surat-jalan.update');
+
+    Route::get('/', DashboardController::class)->name('dashboard');
+
+    Route::resource('surat-jalan', SuratJalanController::class)->parameters(['surat-jalan' => 'pengambilan']);
     Route::get('surat-jalan/{pengambilan}/print', [SuratJalanController::class, 'print'])->name('surat-jalan.print');
     Route::post('surat-jalan/get-no-sa', [SuratJalanController::class, 'getNoSA'])->name('surat-jalan.get-no-sa');
 
@@ -49,17 +52,28 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('sa', SaController::class);
 
-
-    Route::resource('pangkalan', PangkalanController::class);
-    Route::resource('sppbe', SppbeController::class);
+    Route::resource('pangkalan', PangkalanController::class)->except('show');
+    Route::resource('sppbe', SppbeController::class)->except('show');
 
     Route::name('armada.')->group(function () {
-        Route::resource('truk', TrukController::class);
-        Route::resource('sopir', SopirController::class);
-        Route::resource('kernet', KernetController::class);
+        Route::resource('truk', TrukController::class)->except('show');
+        Route::resource('sopir', SopirController::class)->except('show');
+        Route::resource('kernet', KernetController::class)->except('show');
     });
 
-    Route::resource('dropzone', DropzoneController::class);
 
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('user', UserController::class)->except('show');
+        Route::put('user/{user}/update-password', [UserController::class, 'password'])->name('user.update-password');
+    });
+
+
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/update-password', [ProfileController::class, 'password'])->name('profile.update-password');
+
+
+    Route::get('setting', [SettingController::class, 'edit'])->name('setting.edit');
+    Route::put('setting', [SettingController::class, 'update'])->name('setting.update');
 });
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
