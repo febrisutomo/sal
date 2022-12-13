@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('plant');
             $table->string('no_hp');
             $table->string('alamat');
+            $table->string('lat_lng');
             $table->timestamps();
         });
     }

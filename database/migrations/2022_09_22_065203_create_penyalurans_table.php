@@ -16,9 +16,10 @@ return new class extends Migration
         Schema::create('penyalurans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pengambilan_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('pangkalan_id')->constrained()->cascadeOnDelete();
-            $table->integer('kuantitas');
-            $table->integer('harga');
+            $table->date('tanggal');
+            $table->foreignId('truk_id')->constrained();
+            $table->foreignId('sopir_id')->constrained();
+            $table->foreignId('kernet_id')->constrained();
             $table->timestamps();
         });
     }

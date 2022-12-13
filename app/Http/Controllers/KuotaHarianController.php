@@ -57,10 +57,11 @@ class KuotaHarianController extends Controller
         );
 
 
-        KuotaHarian::create($validated);
+        $kuota = KuotaHarian::create($validated);
 
         return response()->json([
             'success' => true,
+            'id' => $kuota->id,
             'message' => 'Kuota harian berhasil ditambahkan!',
         ]);
 

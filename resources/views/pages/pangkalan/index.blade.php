@@ -24,6 +24,10 @@
             </li> --}}
             </ul>
             <div class="ml-auto">
+                <a href="{{ route('pangkalan.maps') }}" class="btn btn-success mr-2">
+                    <span class="btn-label"><i class="la la-map mr-1"></i></span>
+                    Peta
+                </a>
                 <div class="dropdown d-inline-block mr-2">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

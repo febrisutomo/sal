@@ -48,6 +48,7 @@ class SppbeController extends Controller
             'plant' => 'required|unique:sppbes,plant',
             'alamat' => 'required',
             'no_hp' => 'required',
+            'lat_lng' => 'required|regex:/^.+,.+$/i',
         ]);
 
         Sppbe::create($validated);
@@ -97,6 +98,7 @@ class SppbeController extends Controller
             'plant' => 'required|unique:sppbes,plant,'.$sppbe->id,
             'alamat' => 'required',
             'no_hp' => 'required',
+            'lat_lng' => 'required|regex:/^.+,.+$/i',
         ]);
 
         $sppbe->update($validated);
@@ -125,5 +127,13 @@ class SppbeController extends Controller
         return response()->json([
             'message' => $messaage
         ], $status);
+    }
+
+    public function maps()
+    {
+        $data = [
+            'sppbes' => Sppbe::all()
+        ];
+        return view('pages.sppbe.maps', $data);
     }
 }

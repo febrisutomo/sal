@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('alamat');
             $table->string('no_hp');
             $table->integer('kuota');
+            $table->string('lat_lng');
             $table->timestamps();
             $table->softDeletes();
         });

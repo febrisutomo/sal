@@ -61,47 +61,16 @@
                                             <td class="text-center number">{{ $kitir->kuotaHarians->sum('kuota') }}</td>
                                             <td class="text-center">{{ $kitir->kuotaHarians->groupBy('tanggal')->count() }}
                                             </td>
-                                            {{-- <td> --}}
-                                            {{-- <div class="form-button-action">
-                                                    <a href="{{ route('kitir.edit', $kitir) }}" data-toggle="tooltip"
-                                                        title="" class="btn btn-link btn-primary btn-lg"
-                                                        data-original-title="Edit Kitir">
-                                                        <i class="la la-edit"></i>
-                                                    </a>
-                                                    <button type="button" data-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-danger delete-kitir"
-                                                        data-id="{{ $kitir->bulan_tahun }}" data-original-title="Hapus">
-                                                        <i class="la la-times"></i>
-                                                    </button>
-                                                </div> --}}
+                                          
                                             <td class="text-center">
-                                                {{-- <div class="dropdown">
-                                                    <button class="btn dropdown-toggle btn-sm" type="button"
-                                                        data-toggle="dropdown"><span class="btn-label">Aksi</span>
-                                                    </button>
-                                                    <div class="dropdown-menu dropdown-menu-right" role="menu"
-                                                        aria-labelledby="dropdownMenu">
-
-                                                        <a class="dropdown-item edit-kitir"
-                                                            href="{{ route('kitir.edit', $kitir) }}"><i
-                                                                class="la la-edit mr-1"></i>Edit</a>
-                                                        <a class="dropdown-item" href="{{ route('kitir.print', $kitir) }}"
-                                                            target="_blank"><i class="la la-print mr-1"></i>Print</a>
-                                                        <div class="dropdown-divider"></div>
-                                                        <a class="dropdown-item delete-kitir text-danger" href="#"
-                                                            data-id="{{ $kitir->bulan_tahun }}"><i
-                                                                class="la la-trash mr-1"></i>Hapus</a>
-
-                                                    </div>
-
-                                                </div> --}}
+                              
                                                 
                                                     <a href="{{ route('kitir.edit', $kitir) }}" data-toggle="tooltip"
                                                         title="" class="btn btn-link btn-primary px-2"
                                                         data-original-title="Edit"><span class="btn-label"><i class="la la-edit"></i></span>
                                                         
                                                     </a>
-                                                    <a href="{{ route('kitir.print', $kitir) }}" data-toggle="tooltip"
+                                                    <a href="{{ route('kitir.print', $kitir) }}" target="_blank" data-toggle="tooltip"
                                                         title="" class="btn btn-link btn-secondary px-2"
                                                         data-original-title="Cetak"><span class="btn-label"><i class="la la-print"></i></span>
                                                         

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use Exception;
 use App\Models\Truk;
 use App\Models\Sopir;
 use App\Models\Sppbe;
 use App\Models\Kernet;
+use App\Models\Setting;
 use App\Models\Pangkalan;
 use App\Models\KuotaHarian;
 use App\Models\Pengambilan;
@@ -23,11 +25,7 @@ class SuratJalanController extends Controller
      */
     public function index(Request $request)
     {
-    //    dd($request->only('no_sa', 'tanggal'));
 
-        // $pengambilans = Pengambilan::with('kuotaHarian.sa', 'truk')->filter($request->only('tanggal', 'no_sa'))->orderBy('id')->get()->sortByDesc(function ($query) {
-        //     return $query->kuotaHarian->tanggal;
-        // });
         $pengambilans = Pengambilan::with('kuotaHarian.sa', 'truk')->filter($request->only('tanggal', 'no_sa', 'start', 'end'))->latest()->get();
 
         return view('pages.surat-jalan.index', compact('pengambilans'));
@@ -73,6 +71,10 @@ class SuratJalanController extends Controller
                 'truk_id' => 'required',
                 'sopir_id' => 'required',
                 'kernet_id' => 'required',
+                'tanggal_penyaluran' => 'required',
+                'truk_id_penyaluran' => 'required',
+                'sopir_id_penyaluran' => 'required',
+                'kernet_id_penyaluran' => 'required',
                 'penyaluran' => 'required',
             ]
         );
@@ -82,15 +84,28 @@ class SuratJalanController extends Controller
         try {
             $pengambilan = Pengambilan::create($validated);
 
-            $penyalurans = [];
+            $date = DateTime::createFromFormat('d/m/Y', $request->tanggal_penyaluran);
+
+            $penyaluran = $pengambilan->penyaluran()->create(
+                [
+                    'tanggal' => $date->format('Y-m-d'),
+                    'truk_id' => $request->truk_id_penyaluran,
+                    'sopir_id' => $request->sopir_id_penyaluran,
+                    'kernet_id' => $request->kernet_id_penyaluran,
+                ]
+            );
+
+            // dd($penyaluran->id);
+
+            $pangkalans = [];
             foreach ($request->penyaluran as $data) {
-                $penyalurans[$data['pangkalan_id']] =  [
-                    'harga' => 14500,
+                $pangkalans[$data['pangkalan_id']] =  [
+                    'harga' => Setting::get()->harga,
                     'kuantitas' => $data['jumlah']
                 ];
             }
 
-            $pengambilan->penyalurans()->attach($penyalurans);
+            $penyaluran->pangkalans()->attach($pangkalans);
 
 
             if ($request->penukaran) {
@@ -111,7 +126,9 @@ class SuratJalanController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
 
-            return to_route('surat-jalan.index')->with('warning', 'Terjadi kesalahan!');;
+            dd($e);
+
+            return to_route('surat-jalan.index')->with('error', 'Terjadi kesalahan!');;
         }
     }
 
@@ -124,7 +141,7 @@ class SuratJalanController extends Controller
     public function show(Pengambilan $pengambilan)
     {
         $data = [
-            'pengambilan' => $pengambilan->load('kuotaHarian.sa.sppbe', 'truk.sopir', 'truk.kernet', 'penyalurans', 'penukarans'),
+            'pengambilan' => $pengambilan->load('kuotaHarian.sa.sppbe', 'truk.sopir', 'truk.kernet', 'penyaluran.pangkalans', 'penukarans'),
         ];
 
         return view('pages/surat-jalan/show', $data);
@@ -146,7 +163,7 @@ class SuratJalanController extends Controller
             'sopirs' => Sopir::all(),
             'kernets' => Kernet::all(),
             'pangkalans' => Pangkalan::orderBy('nama')->get(),
-            'pengambilan' => $pengambilan->load('kuotaHarian.sa.sppbe', 'truk.sopir', 'truk.kernet', 'penyalurans', 'penukarans')
+            'pengambilan' => $pengambilan->load('kuotaHarian.sa.sppbe', 'truk.sopir', 'truk.kernet', 'penyaluran.pangkalans', 'penukarans')
         ];
 
         return view('pages/surat-jalan/edit', $data);
@@ -164,11 +181,15 @@ class SuratJalanController extends Controller
 
         $validated = $request->validate(
             [
+                'sppbe_id' => 'required',
                 'kuota_harian_id' => 'required',
                 'truk_id' => 'required',
-                'sppbe_id' => 'required',
                 'sopir_id' => 'required',
                 'kernet_id' => 'required',
+                'tanggal_penyaluran' => 'required',
+                'truk_id_penyaluran' => 'required',
+                'sopir_id_penyaluran' => 'required',
+                'kernet_id_penyaluran' => 'required',
                 'penyaluran' => 'required',
             ]
         );
@@ -180,15 +201,26 @@ class SuratJalanController extends Controller
 
 
 
-            $penyalurans = [];
+            $date = DateTime::createFromFormat('d/m/Y', $request->tanggal_penyaluran);
+
+            $pengambilan->penyaluran()->update(
+                [
+                    'tanggal' => $date->format('Y-m-d'),
+                    'truk_id' => $request->truk_id_penyaluran,
+                    'sopir_id' => $request->sopir_id_penyaluran,
+                    'kernet_id' => $request->kernet_id_penyaluran,
+                ]
+            );
+
+            $pangkalans = [];
             foreach ($request->penyaluran as $data) {
-                $penyalurans[$data['pangkalan_id']] =  [
-                    'harga' => 14500,
+                $pangkalans[$data['pangkalan_id']] =  [
+                    'harga' => Setting::get()->harga,
                     'kuantitas' => $data['jumlah']
                 ];
             }
 
-            $pengambilan->penyalurans()->sync($penyalurans);
+            $pengambilan->penyaluran->pangkalans()->sync($pangkalans);
 
 
 
@@ -212,7 +244,7 @@ class SuratJalanController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
 
-            return to_route('surat-jalan.show', $pengambilan)->with('warning', 'Surat Jalan gagal diperbarui!');
+            return to_route('surat-jalan.show', $pengambilan)->with('error', 'Surat Jalan gagal diperbarui!');
         }
     }
 
@@ -242,7 +274,7 @@ class SuratJalanController extends Controller
     {
         // dd($pengambilan);
         $data = [
-            'pengambilan' => $pengambilan->load('kuotaHarian.sa.sppbe', 'truk', 'penyalurans'),
+            'pengambilan' => $pengambilan->load('kuotaHarian.sa.sppbe', 'truk', 'penyaluran.pangkalans'),
         ];
 
         // return view('pages/surat-jalan/pdf', $data);

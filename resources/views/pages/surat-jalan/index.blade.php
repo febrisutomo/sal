@@ -88,7 +88,7 @@
                                             <td><a href="{{ route('armada.truk.edit', $pengambilan->truk ) }}">{{ $pengambilan->truk->kode }}</a></td>
                                             {{-- <td>{{ $pengambilan->sopir->nama }}</td> --}}
                                             <td>{{ $pengambilan->jumlah }}</td>
-                                            <td>{{ $pengambilan->total_penyaluran }}</td>
+                                            <td>{{ $pengambilan->penyaluran->total}}</td>
                                             <td class="text-center">
                                                 <div class="btn-group dropdown">
                                                     <button class="btn btn-sm dropdown-toggle" type="button"

@@ -18,6 +18,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PangkalanController;
 use App\Http\Controllers\SuratJalanController;
 use App\Http\Controllers\KuotaHarianController;
+use App\Models\Pangkalan;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
@@ -53,7 +54,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('sa', SaController::class);
 
     Route::resource('pangkalan', PangkalanController::class)->except('show');
+    Route::get('pangkalan/maps', [PangkalanController::class, 'maps'])->name('pangkalan.maps');
+
+
     Route::resource('sppbe', SppbeController::class)->except('show');
+    Route::get('spppbe/maps', [SppbeController::class, 'maps'])->name('sppbe.maps');
+
 
     Route::name('armada.')->group(function () {
         Route::resource('truk', TrukController::class)->except('show');

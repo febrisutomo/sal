@@ -1,7 +1,6 @@
 @extends('layouts.app', ['title' => 'Edit Surat Jalan'])
 
 @section('content')
-    <div class="data" data-pengambilan='@json($pengambilan)'></div>
     <div class="container-fluid">
         <div class="page-header">
             <h4 class="page-title">Edit Surat Jalan</h4>
@@ -15,7 +14,7 @@
                     <i class="la la-angle-right"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="#">Surat Jalan</a>
+                    <a href="{{route('surat-jalan.index')}}">Surat Jalan</a>
                 </li>
                 <li class="separator">
                     <i class="la la-angle-right"></i>
@@ -35,11 +34,13 @@
                     @csrf
                     @method('PUT')
                     <div class="card">
-
+                        <div class="card-header">
+                            <h4 class="card-title">Pengambilan</h4>
+                        </div>
                         <div class="card-body">
-                            <h6>Pengambilan</h6>
+                            
                             <div class="row mb-3">
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group form-show-validation">
                                         <label for="tanggal" class="required">Tanggal</label>
                                         <div class="input-group">
@@ -48,14 +49,14 @@
                                                     <i class="la la-calendar-o"></i>
                                                 </span>
                                             </div>
-                                            <input type="text" class="form-control" id="tanggal" name="tanggal"
+                                            <input type="text" class="form-control tanggal" id="tanggal" name="tanggal"
                                                 placeholder="Pilih Tanggal" required>
                                         </div>
 
                                     </div>
                                 </div>
 
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group form-show-validation">
                                         <label for="sppbe_id" class="required">SP(P)BE</label>
                                         <div class="input-group">
@@ -75,7 +76,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group form-show-validation">
                                         <label for="no_sa" class="required">No. SA</label>
                                         <div class="input-group">
@@ -92,7 +93,7 @@
                                 </div>
 
 
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group form-show-validation">
                                         <label for="truk" class="required">Truk</label>
                                         <div class="input-group">
@@ -112,7 +113,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group form-show-validation">
                                         <label for="sopir" class="required">Sopir</label>
                                         <div class="input-group mb-3">
@@ -131,7 +132,7 @@
 
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group form-show-validation">
                                         <label for="kernet" class="required">Kernet</label>
                                         <div class="input-group mb-3">
@@ -153,8 +154,17 @@
 
                             </div>
 
-                            <h6 classr="required">Penukaran</h6>
-                            <div class="form-group px-0">
+              
+                        </div>
+                        
+
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Penukaran</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="la la-barcode"></i></span>
@@ -163,7 +173,7 @@
                                         placeholder="Masukkan nomor seri">
                                 </div>
                             </div>
-                            <div class="table-responsive mb-3">
+                            <div class="table-responsive mb-3 px-2">
                                 <table id="tb_penukaran" class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -250,60 +260,141 @@
                                 </table>
 
                             </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Penyaluran</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-lg-3">
+                                    <div class="form-group form-show-validation">
+                                        <label for="tanggalPenyaluran" class="required">Tanggal</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="la la-calendar-o"></i>
+                                                </span>
+                                            </div>
+                                            <input type="text" class="form-control tanggal" id="tanggalPenyaluran"
+                                                name="tanggal_penyaluran" placeholder="Pilih Tanggal"
+                                                value="{{ old('tanggal_penyaluran', date('d/m/Y')) }}" required>
+                                        </div>
 
-
-
-                            <h6 class="required">Penyaluran</h6>
-                            <div class="form-group px-0">
-                                {{-- <label for="">Pilih Pangkalan</label> --}}
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="la la-store-alt"></i></span>
                                     </div>
-                                    <select name="add_penyaluran" class="form-control"
-                                        data-placeholder="Pilih Pangkalan">
-                                    </select>
                                 </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group form-show-validation">
+                                        <label for="trukPenyaluran" class="required">Truk</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="la la-truck"></i></span>
+                                            </div>
+                                            <select class="form-control select2" name="truk_id_penyaluran"
+                                                id="trukPenyaluran" data-placeholder="Pilih Truk" required>
+                                                <option value=""></option>
+                                                @foreach ($truks as $truk)
+                                                    <option value="{{ $truk->id }}"
+                                                        data-truk='@json($truk)' @selected($pengambilan->penyaluran->truk_id == $truk->id)> {{ $truk->kode }} |
+                                                        {{ $truk->plat_nomor }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group form-show-validation">
+                                        <label for="sopirPenyaluran" class="required">Sopir</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="la la-user"></i></span>
+                                            </div>
+                                            <select class="form-control select2" name="sopir_id_penyaluran"
+                                                id="sopirPenyaluran" data-placeholder="Pilih Sopir" required>
+                                                <option value=""></option>
+                                                @foreach ($sopirs as $sopir)
+                                                    <option value="{{ $sopir->id }}" @selected($pengambilan->penyaluran->sopir_id == $sopir->id)> {{ $sopir->nama }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group form-show-validation">
+                                        <label for="kernetPenyaluran" class="required">Kernet</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="la la-user"></i></span>
+                                            </div>
+                                            <select class="form-control select2" name="kernet_id_penyaluran"
+                                                id="kernetPenyaluran" data-placeholder="Pilih Kernet" required>
+                                                <option value=""></option>
+                                                @foreach ($kernets as $kernet)
+                                                    <option value="{{ $kernet->id }}" @selected($pengambilan->penyaluran->kernet_id == $kernet->id)> {{ $kernet->nama }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group form-show-validation">
+                                        <label for="add_penyaluran">Pangkalan</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="la la-store-alt"></i></span>
+                                            </div>
+                                            <select name="add_penyaluran" id="add_penyaluran" class="form-control"
+                                                data-placeholder="Pilih Pangkalan">
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
-                            <div class="table-responsive mb-3">
+                            <div class="table-responsive mb-3 px-2">
                                 <table id="tb_penyaluran" class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th class="text-center" style="width: 30px">No.</th>
-                                            <th style="width: 260px">Nama Pangkalan</th>
+                                            <th style="width: 200px">Nama Pangkalan</th>
                                             <th>Alamat</th>
                                             <th class="text-right" style="width: 100px">Harga</th>
                                             <th class="text-right" style="width: 120px">Kuantitas</th>
-                                            <th class="text-right" style="width: 120px">Bayar</th>
+                                            <th class="text-right" style="width: 130px">Bayar</th>
                                             <th style="width: 40px"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($pengambilan->penyalurans as $index => $penyaluran)
+                                        @foreach ($pengambilan->penyaluran->pangkalans as $index => $pangkalan)
                                             <tr>
                                                 <td class="no text-center" style="width: 30px">{{ $index + 1 }}
                                                 </td>
                                                 <td>
                                                     <input type="hidden"
                                                         name="penyaluran[{{ $index }}][pangkalan_id]"
-                                                        value="{{ $penyaluran->id }}">
-                                                    {{ $penyaluran->nama }}
+                                                        value="{{ $pangkalan->id }}">
+                                                    {{ $pangkalan->nama }}
                                                 </td>
                                                 <td class="alamat">
-                                                    {{ $penyaluran->alamat }}
+                                                    {{ $pangkalan->alamat }}
                                                 </td>
                                                 <td class="harga text-right">
-                                                    {{ rupiah($penyaluran->pivot->harga) }}
+                                                    {{ rupiah($pangkalan->pivot->harga) }}
                                                 </td>
                                                 <td class="text-right" style="max-width: 80px">
                                                     <input type="number" name="penyaluran[{{ $index }}][jumlah]"
                                                         class="form-control text-right"
-                                                        data-kuota="{{ $penyaluran->kuota }}"
-                                                        value="{{ $penyaluran->pivot->kuantitas }}" min="0">
+                                                        data-kuota="{{ $pangkalan->kuota }}"
+                                                        value="{{ $pangkalan->pivot->kuantitas }}" min="0">
                                                 </td>
                                                 <td class="subtotal text-right">
-                                                    {{ rupiah($penyaluran->pivot->kuantitas * 14500) }}
+                                                    {{ rupiah($pangkalan->pivot->kuantitas * 14500) }}
                                                 </td>
                                                 <td class="text-center">
                                                     <button type="button"
@@ -332,9 +423,9 @@
                             <table class="table table-bordered " style="width: 400px">
                                 <tr>
                                     <th>Stok Gudang</th>
-                                    <th class="text-right">
-                                        {{ $pengambilans->sum('jumlah') - $pengambilans->sum('total_penyaluran') }}
-                                    </th>
+                                        <th class="text-right" id="stokGudang">
+                                            {{ Setting::get()->stok_awal + $pengambilans->sum('jumlah') - $pengambilans->sum('total_penyaluran') }}
+                                        </th>
                                 </tr>
                                 <tr>
                                     <th>Total Pengambilan</th>
@@ -349,15 +440,14 @@
                                     <th class="text-right">0</th>
                                 </tr>
                             </table>
-
-                        </div>
-                        <div class="card-footer">
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary"><span class="btn-label"><i
-                                            class="la la-save mr-1"></i></span>Simpan</button>
-                            </div>
                         </div>
                     </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary"><span class="btn-label"><i
+                                        class="la la-save mr-1"></i></span>Simpan</button>
+                        </div>
+
                 </form>
             </div>
         </div>
@@ -375,15 +465,15 @@
 
         $(document).ready(function() {
 
-            let pengambilan = $('.data').data('pengambilan')
+            let pengambilan = @json($pengambilan);
 
-            let stok_gudang = parseInt({{ $pengambilans->sum('jumlah') - $pengambilans->sum('total_penyaluran') }})
+            let stok_gudang = parseInt({{Setting::get()->stok_awal + $pengambilans->sum('jumlah') - $pengambilans->sum('total_penyaluran') }})
             let total_pengambilan = 560
             let total_penyaluran = 0
 
             let tanggal = pengambilan.kuota_harian.tanggal
 
-            const harga = pengambilan.penyalurans[0].pivot.harga
+            const harga = pengambilan.penyaluran.pangkalans[0].pivot.harga
 
             function getNoSA() {
                 $('select[name=kuota_harian_id]').attr('disabled', true)
@@ -418,6 +508,10 @@
                 success: function(element) {
                     $(element).closest('.form-group').removeClass('has-error')
                 },
+                errorPlacement: function(error, element) {
+                    let formGroup = element.closest('.form-group');
+                    error.appendTo(formGroup);
+                }
             });
 
             $('select').on('change', function() {
@@ -435,14 +529,26 @@
                 startDate: new Date(pengambilan.kuota_harian.tanggal).toLocaleDateString('en-GB')
             })
 
+            $('#tanggalPenyaluran').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                autoApply: true,
+                locale: {
+                    format: 'DD/MM/YYYY'
+                },
+                startDate: new Date(pengambilan.penyaluran.tanggal).toLocaleDateString('en-GB')
+            })
+
             $('#tanggal').on('change', function() {
                 tanggal = moment(this.value, 'DD/MM/YYYY').format('YYYY-MM-DD')
+                $('#tanggalPenyaluran').val(this.value)
                 getNoSA()
 
             })
 
             $('#tanggal').on('apply.daterangepicker', function(ev, picker) {
                 tanggal = picker.startDate.format('YYYY-MM-DD');
+                $('#tanggalPenyaluran').val(this.value)
                 getNoSA()
             });
 
@@ -450,11 +556,30 @@
                 getNoSA()
             })
 
-            $('select[name="truk_id').on('change', function(){
+            $('select[name="truk_id').on('change', function() {
                 let truk = $('select[name=truk_id] option:selected').data('truk')
 
-                $('select[name=sopir_id]').val(truk.sopir_id).trigger('change');
-                $('select[name=kernet_id]').val(truk.kernet_id).trigger('change');
+                $('select[name=truk_id_penyaluran').val(this.value).trigger('change');
+
+                if (truk) {
+                    $('select[name=sopir_id]').val(truk.sopir_id).trigger('change');
+                    $('select[name=kernet_id]').val(truk.kernet_id).trigger('change');
+                    $('select[name=sopir_id_penyaluran]').val(truk.sopir_id).trigger('change');
+                    $('select[name=kernet_id_penyaluran]').val(truk.kernet_id).trigger('change');
+                } else {
+                    $('select[name=sopir_id]').val(null).trigger('change');
+                    $('select[name=kernet_id]').val(null).trigger('change');
+                    $('select[name=sopir_id_penyaluran]').val(null).trigger('change');
+                    $('select[name=kernet_id_penyaluran]').val(null).trigger('change');
+                }
+
+            })
+
+            $('select[name=sopir_id]').on('change', function(){
+                $('select[name=sopir_id_penyaluran]').val(this.value).trigger('change');
+            })
+            $('select[name=kernet_id]').on('change', function(){
+                $('select[name=kernet_id_penyaluran]').val(this.value).trigger('change');
             })
 
 

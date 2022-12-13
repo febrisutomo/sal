@@ -40,6 +40,8 @@ class SettingController extends Controller
             'telepon' => 'required',
             'nama_manager' => 'required',
             'ttd_manager' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'harga' => 'required',
+            'stok_awal' => 'required',
         ]);
 
         if ($request->file('ttd_manager')) {

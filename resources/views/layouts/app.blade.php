@@ -8,13 +8,11 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ isset($title) ?  $title.' - '.config('app.name') : config('app.name')  }}</title>
+    <title>{{ isset($title) ? $title . ' - ' . config('app.name') : config('app.name') }}</title>
 
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900">
     <link rel="stylesheet" href="{{ asset('plugins/line-awesome/css/line-awesome.min.css') }}">
-
-
 
     <link rel="stylesheet" href="{{ asset('plugins/jquery-ui-1.12.1.custom/jquery-ui.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/jquery-scrollbar/jquery.scrollbar.min.css') }}">
@@ -27,9 +25,10 @@
 
     <link rel="stylesheet" href="{{ asset('plugins/toastr/toastr.min.css') }}">
 
-
-
     <link rel="stylesheet" href="{{ asset('plugins/daterangepicker/daterangepicker.css') }}">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
@@ -40,6 +39,24 @@
             padding: .6rem;
         } */
 
+
+        form .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        form [class^="col-"] {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .input-group {
+            flex-wrap: unset
+        }
+
+        .select2-container {
+            width: 100% !important
+        }
 
         .truncate {
             width: 100%;
@@ -86,6 +103,26 @@
 
         .swal2-html-container {
             font-size: .8rem;
+        }
+
+        .green-tooltip::before,
+        .blue-tooltip::before {
+            border: none;
+        }
+
+        .green-tooltip {
+            background: transparent;
+            border: none;
+            font-weight: bold;
+            color: seagreen;
+            box-shadow: none;
+        }
+
+        .blue-tooltip {
+            background: transparent;
+            border: none;
+            color: navy;
+            box-shadow: none;
         }
     </style>
 
@@ -496,6 +533,12 @@
 
 
     <script src="{{ asset('plugins/toastr/toastr.min.js') }}"></script>
+
+
+
+    <script script script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
 
     <!-- Ready Pro JS -->
     <script src="{{ asset('js/ready.min.js') }}"></script>

@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use App\Models\Sopir;
 use App\Models\Truk;
+use App\Models\Sopir;
 use App\Models\Kernet;
-use App\Models\Pangkalan;
 use App\Models\Penukaran;
+use App\Models\Penyaluran;
 use App\Models\KuotaHarian;
-use App\Models\PangkalanPenyaluran;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Pengambilan extends Model
@@ -39,19 +37,14 @@ class Pengambilan extends Model
         return $this->belongsTo(Kernet::class);
     }
 
-
     public function kuotaHarian()
     {
         return $this->belongsTo(KuotaHarian::class);
     }
 
-    public function penyalurans()
+    public function penyaluran()
     {
-        return $this->belongsToMany(Pangkalan::class, 'pangkalan_penyalurans')
-            ->using(PangkalanPenyaluran::class)
-            ->withTimestamps()
-            ->withPivot('harga', 'kuantitas')
-            ->withTrashed();
+        return $this->hasOne(Penyaluran::class);
     }
 
     public function penukarans()
@@ -66,7 +59,7 @@ class Pengambilan extends Model
 
     public function getTotalPenyaluranAttribute()
     {
-        return $this->penyalurans->sum('pivot.kuantitas');
+        return $this->penyaluran->total;
     }
 
     public function scopeFilter($query, $filter)
@@ -80,15 +73,6 @@ class Pengambilan extends Model
         })->when($filter['end'] ?? false, function ($query, $tanggal) {
             $query->whereRelation('kuotaHarian', 'tanggal', '<=', $tanggal);
         });
-
-        // $filter['start'] = $filter['start'] ?? '';
-        // $filter['end'] = $filter['end'] ?? '';
-
-        // if ( $filter['start'] != '' && $filter['end'] != '' ) {
-        //     $query->whereHas('kuotaHarian', function($query) use($filter){
-        //         $query->whereBetween('tanggal', [$filter['start'], $filter['end']]);
-        //     });
-        // }
 
     }
 

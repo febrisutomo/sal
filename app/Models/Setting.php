@@ -16,6 +16,8 @@ class Setting extends Model
         'telepon',
         'nama_manager',
         'ttd_manager',
+        'harga',
+        'stok_awal'
     ];
     public static function get()
     {

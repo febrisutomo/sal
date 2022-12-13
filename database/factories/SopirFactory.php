@@ -17,7 +17,7 @@ class SopirFactory extends Factory
     public function definition()
     {
         return [
-            'nama' => $this->faker->firstName('male').' '.$this->faker->lastName('male'),
+            'nama' => $this->faker->firstName('male'),
             'alamat' => $this->faker->address(),
             'no_hp' => $this->faker->e164PhoneNumber(),
             'ttd' => 'ttd.jpg'

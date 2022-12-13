@@ -69,6 +69,7 @@ class DatabaseSeeder extends Seeder
                 'plant' => 'G396',
                 'alamat' => fake()->address(),
                 'no_hp' => fake()->e164PhoneNumber(),
+                'lat_lng' => fake()->latitude(-7.511223017989502 - 0.06, -7.511223017989502 + 0.06) . ', ' . fake()->longitude(109.29252259228235 - 0.06,     109.29252259228235 + 0.06),
             ],
             [
                 'nama' => 'PT Tirtatama Elpiji',
@@ -77,6 +78,8 @@ class DatabaseSeeder extends Seeder
                 'plant' => 'G360',
                 'alamat' => fake()->address(),
                 'no_hp' => fake()->e164PhoneNumber(),
+                'lat_lng' => fake()->latitude(-7.511223017989502 - 0.06, -7.511223017989502 + 0.06) . ', ' . fake()->longitude(109.29252259228235 - 0.06,     109.29252259228235 + 0.06),
+
             ],
             [
                 'nama' => 'PT Kusuma Banyumasan Jaya Gas',
@@ -85,6 +88,8 @@ class DatabaseSeeder extends Seeder
                 'plant' => 'G39P',
                 'alamat' => fake()->address(),
                 'no_hp' => fake()->e164PhoneNumber(),
+                'lat_lng' => fake()->latitude(-7.511223017989502 - 0.06, -7.511223017989502 + 0.06) . ', ' . fake()->longitude(109.29252259228235 - 0.06,     109.29252259228235 + 0.06),
+
             ],
             [
                 'nama' => 'PT Banyumas Gas Abadi',
@@ -93,6 +98,8 @@ class DatabaseSeeder extends Seeder
                 'plant' => 'G39S',
                 'alamat' => fake()->address(),
                 'no_hp' => fake()->e164PhoneNumber(),
+                'lat_lng' => fake()->latitude(-7.511223017989502 - 0.06, -7.511223017989502 + 0.06) . ', ' . fake()->longitude(109.29252259228235 - 0.06,     109.29252259228235 + 0.06),
+
             ],
         ];
 
@@ -156,7 +163,8 @@ class DatabaseSeeder extends Seeder
 
 
         Setting::create([
-            'harga' => 14500,
+            'stok_awal' => 1000,
+            'harga' => 14250,
             'nama_manager' => 'Dwi Yuliarto',
             'ttd_manager' => 'ttd-yuli.jpg',
             'nama_perusahaan' => 'PT Serayu Agung Lestari',

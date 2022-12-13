@@ -15,7 +15,7 @@ class PangkalanController extends Controller
     public function index()
     {
         $data = [
-            'pangkalans' => Pangkalan::all()
+            'pangkalans' => Pangkalan::latest()->get()
         ];
         return view('pages.pangkalan.index', $data);
     }
@@ -44,6 +44,7 @@ class PangkalanController extends Controller
             'kuota' => 'required',
             'no_hp' => 'required',
             'alamat' => 'required',
+            'lat_lng' => 'required|regex:/^.+,.+$/i',
         ]);
 
         Pangkalan::create($validated);
@@ -71,7 +72,7 @@ class PangkalanController extends Controller
     public function edit(Pangkalan $pangkalan)
     {
         $data = [
-            'pangkalan' => $pangkalan
+            'pangkalan' => $pangkalan,
         ];
 
         return view('pages.pangkalan.edit', $data);
@@ -92,6 +93,7 @@ class PangkalanController extends Controller
             'kuota' => 'required',
             'no_hp' => 'required',
             'alamat' => 'required',
+            'lat_lng' => 'required|regex:/^.+,.+$/i',
         ]);
 
         $pangkalan->update($validated);
@@ -113,5 +115,13 @@ class PangkalanController extends Controller
             'success' => true,
             'message' => 'Pangkalan berhasil dihapus!'
         ]);
+    }
+
+    public function maps()
+    {
+        $data = [
+            'pangkalans' => Pangkalan::all()
+        ];
+        return view('pages.pangkalan.maps', $data);
     }
 }

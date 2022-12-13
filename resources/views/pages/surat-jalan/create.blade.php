@@ -35,12 +35,14 @@
                 <form id="suratJalan" action="{{ route('surat-jalan.store') }}" method="POST">
                     @csrf
                     <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Pengambilan</h4>
+                        </div>
 
                         <div class="card-body">
 
-                            <h6 classr="required">Pengambilan</h6>
                             <div class="row mb-3">
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group form-show-validation">
                                         <label for="tanggal" class="required">Tanggal</label>
                                         <div class="input-group">
@@ -49,7 +51,7 @@
                                                     <i class="la la-calendar-o"></i>
                                                 </span>
                                             </div>
-                                            <input type="text" class="form-control" id="tanggal" name="tanggal"
+                                            <input type="text" class="form-control tanggal" id="tanggal" name="tanggal"
                                                 placeholder="Pilih Tanggal" value="{{ old('tanggal', date('d/m/Y')) }}"
                                                 required>
                                         </div>
@@ -57,8 +59,8 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-6">
-                                    <div class="form-group form-show-validation ">
+                                <div class="col-lg-4">
+                                    <div class="form-group form-show-validation">
                                         <label for="sppbe_id" class="required">SP(P)BE</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
@@ -72,14 +74,11 @@
                                                         {{ $sppbe->nama }}</option>
                                                 @endforeach
                                             </select>
-
-
                                         </div>
-
                                     </div>
                                 </div>
 
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group form-show-validation">
                                         <label for="no_sa" class="required">No. SA</label>
                                         <div class="input-group">
@@ -90,14 +89,13 @@
                                                 data-placeholder="Pilih No. SA" required>
                                                 <option value=""></option>
                                             </select>
-
                                         </div>
 
                                     </div>
                                 </div>
 
 
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group form-show-validation">
                                         <label for="truk" class="required">Truk</label>
                                         <div class="input-group">
@@ -119,10 +117,10 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group form-show-validation">
                                         <label for="sopir" class="required">Sopir</label>
-                                        <div class="input-group mb-3">
+                                        <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="la la-user"></i></span>
                                             </div>
@@ -138,10 +136,10 @@
 
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <div class="form-group form-show-validation">
                                         <label for="kernet" class="required">Kernet</label>
-                                        <div class="input-group mb-3">
+                                        <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="la la-user"></i></span>
                                             </div>
@@ -160,8 +158,15 @@
 
                             </div>
 
-                            <h6 classr="required">Penukaran</h6>
-                            <div class="form-group px-0">
+                        </div>
+                       
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Penukaran</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="la la-barcode"></i></span>
@@ -170,7 +175,7 @@
                                         placeholder="Masukkan nomor seri">
                                 </div>
                             </div>
-                            <div class="table-responsive mb-3">
+                            <div class="table-responsive mb-3 px-2">
                                 <table id="tb_penukaran" class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -205,31 +210,114 @@
 
                             </div>
 
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Penyaluran</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-lg-3">
+                                    <div class="form-group form-show-validation">
+                                        <label for="tanggalPenyaluran" class="required">Tanggal</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="la la-calendar-o"></i>
+                                                </span>
+                                            </div>
+                                            <input type="text" class="form-control tanggal" id="tanggalPenyaluran"
+                                                name="tanggal_penyaluran" placeholder="Pilih Tanggal"
+                                                value="{{ old('tanggal_penyaluran', date('d/m/Y')) }}" required>
+                                        </div>
 
-
-                            <h6 class="required">Penyaluran</h6>
-                            <div class="form-group px-0">
-                                {{-- <label for="">Pilih Pangkalan</label> --}}
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="la la-store-alt"></i></span>
                                     </div>
-                                    <select name="add_penyaluran" id="add_penyaluran" class="form-control"
-                                        data-placeholder="Pilih Pangkalan">
-                                    </select>
                                 </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group form-show-validation">
+                                        <label for="trukPenyaluran" class="required">Truk</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="la la-truck"></i></span>
+                                            </div>
+                                            <select class="form-control select2" name="truk_id_penyaluran"
+                                                id="trukPenyaluran" data-placeholder="Pilih Truk" required>
+                                                <option value=""></option>
+                                                @foreach ($truks as $truk)
+                                                    <option value="{{ $truk->id }}"
+                                                        data-truk='@json($truk)'> {{ $truk->kode }} |
+                                                        {{ $truk->plat_nomor }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group form-show-validation">
+                                        <label for="sopirPenyaluran" class="required">Sopir</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="la la-user"></i></span>
+                                            </div>
+                                            <select class="form-control select2" name="sopir_id_penyaluran"
+                                                id="sopirPenyaluran" data-placeholder="Pilih Sopir" required>
+                                                <option value=""></option>
+                                                @foreach ($sopirs as $sopir)
+                                                    <option value="{{ $sopir->id }}"> {{ $sopir->nama }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group form-show-validation">
+                                        <label for="kernetPenyaluran" class="required">Kernet</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="la la-user"></i></span>
+                                            </div>
+                                            <select class="form-control select2" name="kernet_id_penyaluran"
+                                                id="kernetPenyaluran" data-placeholder="Pilih Kernet" required>
+                                                <option value=""></option>
+                                                @foreach ($kernets as $kernet)
+                                                    <option value="{{ $kernet->id }}"> {{ $kernet->nama }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group form-show-validation">
+                                        <label for="add_penyaluran">Pangkalan</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="la la-store-alt"></i></span>
+                                            </div>
+                                            <select name="add_penyaluran" id="add_penyaluran" class="form-control"
+                                                data-placeholder="Pilih Pangkalan">
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
-                            <div class="table-responsive mb-3">
+
+                            <div class="table-responsive mb-3 px-2">
                                 <table id="tb_penyaluran" class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th class="text-center" style="width: 30px">No.</th>
-                                            <th style="width: 260px">Nama Pangkalan</th>
+                                            <th style="width: 200px">Nama Pangkalan</th>
                                             <th>Alamat</th>
                                             <th class="text-right" style="width: 100px">Harga</th>
                                             <th class="text-right" style="width: 120px">Kuantitas</th>
-                                            <th class="text-right" style="width: 120px">Bayar</th>
+                                            <th class="text-right" style="width: 130px">Bayar</th>
                                             <th style="width: 40px"></th>
                                         </tr>
                                     </thead>
@@ -260,35 +348,38 @@
 
 
                             </div>
-                            <table class="table table-bordered " style="width: 400px">
-                                <tr>
-                                    <th>Stok Gudang</th>
-                                    <th class="text-right">
-                                        {{ $pengambilans->sum('jumlah') - $pengambilans->sum('total_penyaluran') }}
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th>Total Pengambilan</th>
-                                    <th class="text-right">560</th>
-                                </tr>
-                                <tr>
-                                    <th>Total Penyaluran</th>
-                                    <th class="text-right total-penyaluran">0</th>
-                                </tr>
-                                <tr class="stok-gudang">
-                                    <th>Simpan ke Gudang</th>
-                                    <th class="text-right">0</th>
-                                </tr>
-                            </table>
+                            <div class="table-responsive px-2">
+                                <table class="table table-bordered" style="width: 400px">
+                                    <tr>
+                                        <th>Stok Gudang</th>
+                                        <th class="text-right" id="stokGudang">
+                                            {{ Setting::get()->stok_awal + $pengambilans->sum('jumlah') - $pengambilans->sum('total_penyaluran') }}
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Pengambilan</th>
+                                        <th class="text-right">560</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Penyaluran</th>
+                                        <th class="text-right total-penyaluran">0</th>
+                                    </tr>
+                                    <tr class="stok-gudang">
+                                        <th>Simpan ke Gudang</th>
+                                        <th class="text-right">0</th>
+                                    </tr>
+                                </table>
 
+                            </div>
                         </div>
-                        <div class="card-footer">
+                    </div>
+
+                     {{-- <div class="card-footer"> --}}
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary"><span class="btn-label"><i
                                             class="la la-save mr-1"></i></span>Simpan</button>
                             </div>
-                        </div>
-                    </div>
+                        {{-- </div> --}}
                 </form>
             </div>
         </div>
@@ -307,7 +398,7 @@
 
         $(document).ready(function() {
 
-            let stok_gudang = parseInt({{ $pengambilans->sum('jumlah') - $pengambilans->sum('total_penyaluran') }})
+            let stok_gudang = parseInt($('#stokGudang').text().trim())
             let total_pengambilan = 560
             let total_penyaluran = 0
             let no_sa = parseInt({{ $no_sa }})
@@ -315,7 +406,7 @@
             let tanggal = moment($('#tanggal').val(), 'DD/MM/YYYY').format('YYYY-MM-DD')
 
 
-            const harga = 14500
+            const harga = parseInt({{ Setting::get()->harga }})
 
             function getNoSA() {
                 $('select[name=kuota_harian_id]').attr('disabled', true)
@@ -350,13 +441,17 @@
                 success: function(element) {
                     $(element).closest('.form-group').removeClass('has-error')
                 },
+                errorPlacement: function(error, element) {
+                    let formGroup = element.closest('.form-group');
+                    error.appendTo(formGroup);
+                }
             });
 
             $('select').on('change', function() {
                 $(this).valid();
             })
 
-            $('#tanggal').daterangepicker({
+            $('.tanggal').daterangepicker({
                 singleDatePicker: true,
                 showDropdowns: true,
                 autoApply: true,
@@ -368,12 +463,14 @@
             $('#tanggal').on('change', function() {
                 tanggal = moment(this.value, 'DD/MM/YYYY').format('YYYY-MM-DD')
                 getNoSA()
+                $('#tanggalPenyaluran').val(this.value)
 
             })
 
             $('#tanggal').on('apply.daterangepicker', function(ev, picker) {
                 tanggal = picker.startDate.format('YYYY-MM-DD');
                 getNoSA()
+                $('#tanggalPenyaluran').val(this.value)
             });
 
             $('select[name="sppbe_id"]').on('change', function() {
@@ -384,8 +481,27 @@
             $('select[name="truk_id').on('change', function() {
                 let truk = $('select[name=truk_id] option:selected').data('truk')
 
-                $('select[name=sopir_id]').val(truk.sopir_id).trigger('change');
-                $('select[name=kernet_id]').val(truk.kernet_id).trigger('change');
+                $('select[name=truk_id_penyaluran').val(this.value).trigger('change');
+
+                if (truk) {
+                    $('select[name=sopir_id]').val(truk.sopir_id).trigger('change');
+                    $('select[name=kernet_id]').val(truk.kernet_id).trigger('change');
+                    $('select[name=sopir_id_penyaluran]').val(truk.sopir_id).trigger('change');
+                    $('select[name=kernet_id_penyaluran]').val(truk.kernet_id).trigger('change');
+                } else {
+                    $('select[name=sopir_id]').val(null).trigger('change');
+                    $('select[name=kernet_id]').val(null).trigger('change');
+                    $('select[name=sopir_id_penyaluran]').val(null).trigger('change');
+                    $('select[name=kernet_id_penyaluran]').val(null).trigger('change');
+                }
+
+            })
+
+            $('select[name=sopir_id]').on('change', function(){
+                $('select[name=sopir_id_penyaluran]').val(this.value).trigger('change');
+            })
+            $('select[name=kernet_id]').on('change', function(){
+                $('select[name=kernet_id_penyaluran]').val(this.value).trigger('change');
             })
 
 

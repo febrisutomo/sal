@@ -17,7 +17,8 @@ class Sppbe extends Model
         'no_sh',
         'plant',
         'alamat',
-        'no_hp'
+        'no_hp',
+        'lat_lng'
     ];
 
     public function sas()

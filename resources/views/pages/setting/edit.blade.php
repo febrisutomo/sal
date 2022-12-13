@@ -143,7 +143,42 @@
                                     </div>
                                 </div>
 
+                                
 
+
+                            </div>
+                            <hr>
+                            <div class="row mb-3">
+                                <div class="col-lg-6">
+                                    <div class="form-group form-show-validation">
+                                        <label for="stok_awal" class="required">Stok Awal</label>
+                                        <input type="number"
+                                            class="form-control @error('stok_awal') is-invalid @enderror"
+                                            id="stok_awal" name="stok_awal" placeholder="Masukkan Stok Awal"
+                                            value="{{ old('stok_awal', $setting->stok_awal) }}" required>
+                                        @error('stok_awal')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group form-show-validation">
+                                        <label for="harga" class="required">Harga /tabung</label>
+                                        <input type="number"
+                                            class="form-control @error('harga') is-invalid @enderror"
+                                            id="harga" name="harga" placeholder="Masukkan Harga Tabung Gas"
+                                            value="{{ old('harga', $setting->harga) }}" required>
+                                        @error('harga')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+
+                                    </div>
+                                </div>
                             </div>
 
 

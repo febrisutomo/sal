@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\Truk;
+use App\Models\Sopir;
+use App\Models\Kernet;
 use App\Models\Pangkalan;
 use App\Models\PangkalanPenyaluran;
 use Illuminate\Database\Eloquent\Model;
@@ -15,14 +17,23 @@ class Penyaluran extends Model
 
     protected $fillable = [
         'pengambilan_id',
+        'tanggal',
+        'truk_id',
+        'sopir_id',
+        'kernet_id',
     ];
+
+    public function pengambilan()
+    {
+        return $this->belongsTo(Pengambilan::class);
+    }
 
     public function pangkalans()
     {
         return $this->belongsToMany(Pangkalan::class, 'pangkalan_penyalurans')
             ->using(PangkalanPenyaluran::class)
             ->withTimestamps()
-            ->withPivot('harga', 'jumlah')
+            ->withPivot('harga', 'kuantitas')
             ->withTrashed();
     }
 
@@ -30,12 +41,25 @@ class Penyaluran extends Model
     {
         return $this->belongsTo(Truk::class);
     }
-
-    public function subtotal(): Attribute
+    
+    public function sopir()
     {
-        return new Attribute(
-            get: fn () => $this->pivot->kuantitas,
-        );
+        return $this->belongsTo(Sopir::class);
+    }
+    
+    public function kernet()
+    {
+        return $this->belongsTo(Kernet::class);
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->pangkalans->sum('pivot.kuantitas');
+    }
+
+    public function getTotalBayarAttribute()
+    {
+        return $this->pangkalans->sum('pivot.bayar');
     }
     
 }

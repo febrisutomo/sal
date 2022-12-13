@@ -89,7 +89,7 @@ class KitirController extends Controller
         $data = [
             'kitir' => $kitir->load('sas.kuotaHarians', 'sas.sppbe'),
             'sppbes' => Sppbe::with('sas')->orderBy('nama')->get(),
-            'dates' => $this->_calendar($kitir->bulan_tahun),
+            'weeks' => $this->_calendar($kitir->bulan_tahun),
         ];
 
         return view('pages.kitir.edit', $data);
@@ -147,9 +147,9 @@ class KitirController extends Controller
 
         if ($this->currentDay == 0) {
 
-            $firstDayOfTheWeek = date('N', strtotime($this->currentYear . '-' . $this->currentMonth . '-01'));
+            $firstDayOfTheWeek = date('N', strtotime($this->currentYear . '-' . $this->currentMonth . '-01')) % 7;
 
-            if (intval($cellNumber) == intval($firstDayOfTheWeek)) {
+            if (intval($cellNumber) == intval($firstDayOfTheWeek) ) {
 
                 $this->currentDay = 1;
             }
@@ -193,10 +193,20 @@ class KitirController extends Controller
 
         $monthStartDay = date('N', strtotime($year . '-' . $month . '-01'));
 
-        if ($monthEndingDay < $monthStartDay) {
+        if ($monthEndingDay % 7  < $monthStartDay % 7) {
 
             $numOfweeks++;
         }
+
+        // $numOfweeks = 5;
+
+        // if ($daysInMonths == 28 && $monthStartDay == 7) {
+        //     $numOfweeks = 4;
+        // }
+
+        // if ($daysInMonths >= 30 && $monthStartDay == 6 ) {
+        //     $numOfweeks = 6;
+        // }
 
         return $numOfweeks;
     }
@@ -227,6 +237,9 @@ class KitirController extends Controller
 
         $weeksInMonth = $this->_weeksInMonth($month, $year);
         // Create weeks in a month
+
+        // $this->_showDay(7) == null ? $start_i = 1 : $start_i = 0;
+
         for ($i = 0; $i < $weeksInMonth; $i++) {
 
             //Create days in a week

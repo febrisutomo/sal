@@ -18,6 +18,7 @@ class Pangkalan extends Model
         'alamat',
         'no_hp',
         'kuota',
+        'lat_lng'
     ];
     
 }

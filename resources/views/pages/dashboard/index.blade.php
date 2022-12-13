@@ -55,7 +55,7 @@
                             <div class="col-7 col-stats">
                                 <div class="numbers">
                                     <p class="card-category">Pengambilan</p>
-                                    <h4 class="card-title number">{{ $pengambilans->sum('jumlah') }}</h4>
+                                    <h4 class="card-title"><span class="number">{{ $pengambilans->sum('jumlah') }}</span> <span style="font-size: .75em">(<span class="number">{{ $pengambilans->count() }}</span>x)</span></h4>
                                 </div>
                             </div>
                         </div>
@@ -74,7 +74,7 @@
                             <div class="col-7 col-stats">
                                 <div class="numbers">
                                     <p class="card-category">Penyaluran</p>
-                                    <h4 class="card-title number">{{ $pengambilans->sum('total_penyaluran') }}</h4>
+                                    <h4 class="card-title"><span class="number">{{ $pengambilans->sum('total_penyaluran ') }}</span></h4>
                                 </div>
                             </div>
                         </div>

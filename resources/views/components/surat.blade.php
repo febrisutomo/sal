@@ -1,10 +1,11 @@
 <div>
     <table class="text-center"
         style="width: 100%; padding-bottom: 4px; border-bottom: 4px double black; margin-bottom: 1rem">
-        <tr> 
+        <tr>
             <td><img src="{{ asset('img/logo-sal.png') }}" height="90"></td>
             <td>
-                <div class="font-weight-bold text-uppercase" style="font-size: 1.5rem">{{ Setting::get()->nama_perusahaan }}</div>
+                <div class="font-weight-bold text-uppercase" style="font-size: 1.5rem">
+                    {{ Setting::get()->nama_perusahaan }}</div>
                 <div class="font-weight-bold" style="font-size: 1.2rem">AGEN GAS ELPIJI 3 KG</div>
                 <div style="font-size: 0.8rem">{{ Setting::get()->alamat }}<br>
                     Telp/Fax: {{ Setting::get()->telepon }}, E-mail : {{ Setting::get()->email }}</div>
@@ -33,15 +34,20 @@
 
     <br>
     <div style="margin-bottom: 1rem">
-        Banyumas, {{ tanggal($pengambilan->created_at) }} <br>
-        {{ Setting::get()->nama_perusahaan }}
+        Banyumas,
+        @if (date('d-m-Y', strtotime($pengambilan->created_at)) <= date('d-m-Y', strtotime($pengambilan->kuotaHarian->tanggal)))
+            {{ tanggal($pengambilan->kuotaHarian->tanggal) }}
+        @else
+            {{ tanggal($pengambilan->created_at) }}
+        @endif
+        <br> {{ Setting::get()->nama_perusahaan }}
     </div>
 
     <table>
         <tr>
             <td style="vertical-align: bottom">
                 <div>
-                    <img src="{{asset('img/ttd-yuli.jpg')}}" width="150px">
+                    <img src="{{ asset('img/ttd-yuli.jpg') }}" width="150px">
                 </div>
                 <u class="text-uppercase">{{ Setting::get()->nama_manager }}</u><br>
                 <i>Manager</i>
@@ -49,7 +55,7 @@
             <td style="width: 5rem"></td>
             <td style="vertical-align: bottom">
                 <div>
-                    <img src="{{asset('img/sopir/'.$pengambilan->sopir->ttd)}}" width="150px">
+                    <img src="{{ asset('img/sopir/' . $pengambilan->sopir->ttd) }}" width="150px">
                 </div>
                 <u class="text-uppercase">{{ $pengambilan->sopir->nama }}</u><br>
                 <i>Sopir</i>
@@ -62,7 +68,6 @@
 
 
 <style>
-   
     .table {
         width: 100%;
         border-collapse: collapse;
