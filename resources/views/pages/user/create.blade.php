@@ -37,7 +37,7 @@
                             <div class="row">
                                 <div class="col-md-6">
 
-                                    <div class="mb-3">
+                                    <div class="form-group">
                                         <label for="name" class="required">Nama</label>
                                         <input type="text" class="form-control @error('name') is-invalid @enderror"
                                             id="name" name="name" placeholder="Masukkan name"
@@ -49,7 +49,7 @@
                                         @enderror
 
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="form-group">
                                         <label for="email" class="required">Email</label>
                                         <input type="email" class="form-control @error('email') is-invalid @enderror"
                                             id="email" name="email" placeholder="Masukkan Email"
@@ -61,7 +61,7 @@
                                         @enderror
 
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="form-group">
                                         <label for="phone" class="required">No. HP</label>
                                         <input type="text" class="form-control @error('phone') is-invalid @enderror"
                                             id="phone" name="phone" placeholder="Masukkan No. HP"
@@ -73,7 +73,7 @@
                                         @enderror
 
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="form-group">
                                         <label for="role" class="required">Role</label>
                                         <select class="form-control" id="role" name="role" required>
                                             <option value="admin" @selected(old('role') == 'admin')>Admin</option>
@@ -83,7 +83,7 @@
 
                                     </div>
 
-                                    <div class="mb-3">
+                                    <div class="form-group">
                                         <label for="is_active" class="required">Status</label>
                                         <select class="form-control" id="is_active" name="is_active" required>
                                             <option value="1" @selected(old('is_active') == '1')>Aktif</option>
@@ -95,7 +95,7 @@
                                 <div class="col-md-6">
 
 
-                                    <div class="mb-3">
+                                    <div class="form-group">
                                         <label for="new-password" class="required">Password</label>
                                         <input type="password" class="form-control @error('password') is-invalid @enderror"
                                             id="new-password" name="password" placeholder="Masukkan Password" required>
@@ -107,7 +107,7 @@
 
                                     </div>
 
-                                    <div class="mb-3">
+                                    <div class="form-group">
                                         <label for="password-confirm" class="required">Konfirmasi Password</label>
                                         <input type="password"
                                             class="form-control @error('password_confirmation') is-invalid @enderror"

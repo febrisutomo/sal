@@ -83,7 +83,9 @@
                                             <td class="text-center">{{ $loop->iteration }}</td>
                                             <td>SJ-{{ str_pad($pengambilan->id, 5, '0', STR_PAD_LEFT) }}</td>
                                             <td>{{ tanggal($pengambilan->kuotaHarian->tanggal) }}</td>
-                                            <td><a href="{{ route('sppbe.edit', $pengambilan->kuotaHarian->sa->sppbe ) }}">{{ $pengambilan->kuotaHarian->sa->sppbe->nama }}</a></td>
+                                            <td><a href="{{ route('sppbe.edit', $pengambilan->kuotaHarian->sa->sppbe ) }}" data-toggle="tooltip"
+                                                title=""
+                                                data-original-title="{{ $pengambilan->kuotaHarian->sa->sppbe->nama }}">{{ $pengambilan->kuotaHarian->sa->sppbe->kode }}</a></td>
                                             <td>{{ $pengambilan->kuotaHarian->sa->no_sa }}</td>
                                             <td><a href="{{ route('armada.truk.edit', $pengambilan->truk ) }}">{{ $pengambilan->truk->kode }}</a></td>
                                             {{-- <td>{{ $pengambilan->sopir->nama }}</td> --}}
@@ -133,6 +135,7 @@
         $(document).ready(function() {
 
             tableExport('#tbSuratJalan')
+            
 
             $('.date-range').daterangepicker({
                 autoApply: false,

@@ -38,7 +38,7 @@
                             <h4 class="card-title">Ubah Profil</h4>
                         </div>
                         <div class="card-body">
-                            <div class="mb-3">
+                            <div class="form-group">
                                 <label for="name" class="required">Nama</label>
                                 <input type="text" class="form-control @error('name') is-invalid @enderror"
                                     id="name" name="name" placeholder="Masukkan name"
@@ -50,7 +50,7 @@
                                 @enderror
 
                             </div>
-                            <div class="mb-3">
+                            <div class="form-group">
                                 <label for="email" class="required">Email</label>
                                 <input type="email" class="form-control @error('email') is-invalid @enderror"
                                     id="email" name="email" placeholder="Masukkan Email"
@@ -62,7 +62,7 @@
                                 @enderror
 
                             </div>
-                            <div class="mb-3">
+                            <div class="form-group">
                                 <label for="phone">No. HP</label>
                                 <input type="text" class="form-control @error('phone') is-invalid @enderror"
                                     id="phone" name="phone" placeholder="Masukkan No. HP"
@@ -74,7 +74,7 @@
                                 @enderror
 
                             </div>
-                            <div class="mb-3">
+                            <div class="form-group">
                                 <label for="role">Role</label>
                                 <select class="form-control" id="role" name="role" required>
                                     <option value="admin" @selected(old('role') == 'admin' || $user->role == 'admin')>Admin</option>
@@ -84,7 +84,7 @@
 
                             </div>
 
-                            <div class="mb-3">
+                            <div class="form-group">
                                 <label for="is_active">Status</label>
                                 <select class="form-control" id="is_active" name="is_active" required>
                                     <option value="1" @selected(old('is_active') == '1' || $user->is_active == 1)>Aktif</option>
@@ -113,7 +113,7 @@
                             <h4 class="card-title">Ubah Password</h4>
                         </div>
                         <div class="card-body">
-                            <div class="mb-3">
+                            <div class="form-group">
                                 <label for="new-password" class="required">Password Baru</label>
                                 <input type="password" class="form-control @error('new_password') is-invalid @enderror"
                                     id="new-password" name="new_password" placeholder="Masukkan Password Baru" required>
@@ -124,7 +124,7 @@
                                 @enderror
 
                             </div>
-                            <div class="mb-3">
+                            <div class="form-group">
                                 <label for="password-confirm" class="required">Konfirmasi Password</label>
                                 <input type="password"
                                     class="form-control @error('password_confirmation') is-invalid @enderror"

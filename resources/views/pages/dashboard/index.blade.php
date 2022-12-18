@@ -1,9 +1,11 @@
 @extends('layouts.app', ['title' => 'Dashboard'])
 
+
 @section('content')
     <div class="container-fluid">
         <div class="page-header">
             <h4 class="page-title">Dashboard</h4>
+            
             {{-- <ul class="breadcrumbs">
                 <li class="nav-home">
                     <a href="{{ route('dashboard') }}">
@@ -42,6 +44,7 @@
 
 
         </div>
+  
         <div class="row">
             <div class="col-sm-6 col-md-3">
                 <div class="card card-stats card-round">

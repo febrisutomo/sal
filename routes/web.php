@@ -1,10 +1,8 @@
 <?php
 
-use App\Models\Sppbe;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SaController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TrukController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\KitirController;
@@ -13,12 +11,10 @@ use App\Http\Controllers\SppbeController;
 use App\Http\Controllers\KernetController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
-use App\Http\Controllers\DropzoneController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PangkalanController;
 use App\Http\Controllers\SuratJalanController;
 use App\Http\Controllers\KuotaHarianController;
-use App\Models\Pangkalan;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
@@ -82,4 +78,3 @@ Route::middleware('auth')->group(function () {
     Route::get('setting', [SettingController::class, 'edit'])->name('setting.edit');
     Route::put('setting', [SettingController::class, 'update'])->name('setting.update');
 });
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
