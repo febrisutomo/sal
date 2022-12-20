@@ -118,7 +118,7 @@
                     if (result.isConfirmed) {
                         let id = $(this).data('pangkalan').id
                         $.ajax({
-                            url: window.location.origin + '/pangkalan/' + id,
+                            url: app_url + '/pangkalan/' + id,
                             type: 'delete',
                             success: function(response) {
                                 toastr.success(

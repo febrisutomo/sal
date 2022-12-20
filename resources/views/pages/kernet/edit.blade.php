@@ -53,7 +53,7 @@
 
                                 <div class="col-lg-6">
                                     <div class="form-group form-show-validation">
-                                        <label for="no_hp" class="required">No. HP</label>
+                                        <label for="no_hp">No. HP</label>
                                         <input type="text" class="form-control @error('no_hp') is-invalid @enderror"
                                             id="no_hp" name="no_hp" placeholder="Masukkan No. HP"
                                             value="{{ old('no_hp', $kernet->no_hp) }}" required>
@@ -68,7 +68,7 @@
 
                                 <div class="col-lg-6">
                                     <div class="form-group form-show-validation">
-                                        <label for="alamat" class="required">Alamat</label>
+                                        <label for="alamat">Alamat</label>
                                         <input type="text" class="form-control @error('alamat') is-invalid @enderror"
                                             id="alamat" name="alamat" placeholder="Masukkan Alamat"
                                             value="{{ old('alamat', $kernet->alamat) }}" required>

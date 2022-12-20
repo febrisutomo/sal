@@ -111,7 +111,7 @@
                     if (result.isConfirmed) {
                         let id = $(this).data('sopir').id
                         $.ajax({
-                            url: window.location.origin + '/sopir/' + id,
+                            url: app_url + '/sopir/' + id,
                             type: 'delete',
                             success: function(response) {
                                 toastr.success(

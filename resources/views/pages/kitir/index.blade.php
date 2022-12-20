@@ -136,7 +136,7 @@
                     'Menyimpan...')
                 let bulan_tahun = $('input[name="bulan_tahun"]').val()
                 $.ajax({
-                    url: window.location.origin + '/kitir',
+                    url: app_url + '/kitir',
                     type: 'POST',
                     data: {
                         bulan_tahun: bulan_tahun
@@ -149,7 +149,7 @@
                                 timeOut: 1000,
                                 fadeOut: 1000,
                                 onHidden: function() {
-                                    window.location.href = window.location.origin +
+                                    window.location.href = app_url +
                                         '/kitir/' +
                                         bulan_tahun + '/edit';
                                 }
@@ -194,7 +194,7 @@
                     if (result.isConfirmed) {
                         let id = $(this).data('id')
                         $.ajax({
-                            url: window.location.origin + '/kitir/' + id,
+                            url: app_url + '/kitir/' + id,
                             type: 'delete',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

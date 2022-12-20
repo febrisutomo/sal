@@ -62,7 +62,7 @@
             }).addTo(map);
 
         var office = L.icon({
-            iconUrl: window.location.origin + '/img/building-solid.svg',
+            iconUrl: app_url + '/img/building-solid.svg',
             iconSize: [36, 36],
             iconAnchor: [36, 36],
             popupAnchor: [0, -36]
@@ -83,7 +83,7 @@
         sppbes.forEach(element => {
             let lat_lng = element.lat_lng.split(",")
             L.marker(lat_lng).addTo(map).bindPopup(
-                `<b><a href="${window.location.origin}/sppbe/${element.id}/edit">${element.nama.toUpperCase()}</a></b><br>${element.alamat}`
+                `<b><a href="${app_url}/sppbe/${element.id}/edit">${element.nama.toUpperCase()}</a></b><br>${element.alamat}`
                 ).bindTooltip(element.nama, {
             permanent: true,
             direction: 'bottom',

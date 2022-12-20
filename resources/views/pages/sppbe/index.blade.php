@@ -118,7 +118,7 @@
                     if (result.isConfirmed) {
                         let id = $(this).data('sppbe').id
                         $.ajax({
-                            url: window.location.origin + '/sppbe/' + id,
+                            url: app_url + '/sppbe/' + id,
                             type: 'delete',
                             success: function(response) {
                                 toastr.success(

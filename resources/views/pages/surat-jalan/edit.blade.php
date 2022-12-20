@@ -478,7 +478,7 @@
             function getNoSA() {
                 $('select[name=kuota_harian_id]').attr('disabled', true)
                 $.ajax({
-                    url: window.location.origin + '/surat-jalan/get-no-sa',
+                    url: app_url + '/surat-jalan/get-no-sa',
                     type: 'POST',
                     data: {
                         tanggal: tanggal,

@@ -113,7 +113,7 @@
                     if (result.isConfirmed) {
                         let id = $(this).data('user').id
                         $.ajax({
-                            url: window.location.origin + '/user/' + id,
+                            url: app_url + '/user/' + id,
                             type: 'delete',
                             success: function(response) {
                                 Toast.fire({

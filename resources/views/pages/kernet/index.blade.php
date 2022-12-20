@@ -109,7 +109,7 @@
                     if (result.isConfirmed) {
                         let id = $(this).data('kernet').id
                         $.ajax({
-                            url: window.location.origin + '/kernet/' + id,
+                            url: app_url + '/kernet/' + id,
                             type: 'delete',
                             success: function(response) {
                                 toastr.success(

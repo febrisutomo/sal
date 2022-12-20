@@ -163,7 +163,7 @@
             $('.date-range').on('apply.daterangepicker', function(ev, picker) {
                 let start = picker.startDate.format('YYYY-MM-DD');
                 let end = picker.endDate.format('YYYY-MM-DD');
-                window.location.replace(window.location.origin+'/surat-jalan?start='+start+'&end='+end);
+                window.location.replace(app_url+'/surat-jalan?start='+start+'&end='+end);
             });
 
             $('body').on('click', '.delete-surat-jalan', function(e) {
@@ -178,7 +178,7 @@
                     if (result.isConfirmed) {
                         let id = $(this).data('pengambilan').id
                         $.ajax({
-                            url: window.location.origin + '/surat-jalan/' + id,
+                            url: app_url + '/surat-jalan/' + id,
                             type: 'DELETE',
                             success: function(response) {
                                 toastr.success(

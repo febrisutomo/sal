@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::create('sopirs', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('alamat');
+            $table->string('alamat')->nullable();
             $table->timestamps();
             $table->string('ttd');
-            $table->string('no_hp');
+            $table->string('no_hp')->nullable();
         });
     }
 

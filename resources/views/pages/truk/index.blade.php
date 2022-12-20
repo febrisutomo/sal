@@ -114,7 +114,7 @@
                     if (result.isConfirmed) {
                         let id = $(this).data('truk').id
                         $.ajax({
-                            url: window.location.origin + '/truk/' + id,
+                            url: app_url + '/truk/' + id,
                             type: 'delete',
                             success: function(response) {
                                 toastr.success(

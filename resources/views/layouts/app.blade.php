@@ -27,8 +27,9 @@
 
     <link rel="stylesheet" href="{{ asset('plugins/daterangepicker/daterangepicker.css') }}">
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+
+    <link rel="stylesheet" href="{{ asset('plugins/leaflet/leaflet.css') }}">
+
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
@@ -477,7 +478,8 @@
                         </ul>
                     </nav> --}}
                     <div class="copyright ml-auto">
-                        2022, made with <i class="la la-heart heart text-danger"></i> by <a href="#">Febri
+                        2022, made with <i class="la la-heart heart text-danger"></i> by <a
+                            href="https://wa.me/+6285870005110" target="_blank">Febri
                             Sutomo</a>
                     </div>
                 </div>
@@ -531,20 +533,18 @@
     <!-- Sweet Alert -->
     <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 
-
     <script src="{{ asset('plugins/toastr/toastr.min.js') }}"></script>
 
-
-
-    <script script script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-
+    <script src="{{ asset('plugins/leaflet/leaflet.js') }}"></script>
 
     <!-- Ready Pro JS -->
     <script src="{{ asset('js/ready.min.js') }}"></script>
 
 
     <script>
+        const app_url = window.location.origin + "/sal-pro/public"
+        // const app_url = window.location.origin
+
         function rupiah(num) {
             return 'Rp ' + num.toLocaleString("id-ID", {
                 style: "decimal"

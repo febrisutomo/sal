@@ -277,8 +277,6 @@ class SuratJalanController extends Controller
             'pengambilan' => $pengambilan->load('kuotaHarian.sa.sppbe', 'truk', 'penyaluran.pangkalans'),
         ];
 
-        // return view('pages/surat-jalan/pdf', $data);
-
         $pdf = PDF::loadView('pages/surat-jalan/print', $data);
 
         // return $pdf->download('surat-jalan-'.$pengambilan->id.'.pdf');

@@ -358,11 +358,11 @@
                 $('#modalNoSA button[type=submit]').prop('disabled', true).text('Menyimpan...')
 
                 let id = $('#modalNoSA').data('id')
-                let url = window.location.origin + '/sa/'
+                let url = app_url + '/sa'
                 let type = 'POST'
 
                 if (id != '') {
-                    url += id
+                    url += '/'+id
                     type = 'PUT'
                 }
 
@@ -432,7 +432,7 @@
                     if (result.isConfirmed) {
                         let id = $(this).closest('tr').data('sa').id
                         $.ajax({
-                            url: window.location.origin + '/sa/' + id,
+                            url: app_url + '/sa/' + id,
                             type: 'delete',
                             success: function(response) {
                                 toastr.success(
@@ -512,14 +512,14 @@
                 let selector = $('#modalKuota').data('selector')
 
                 let id = $('#modalKuota').data('id')
-                let url = window.location.origin + '/kuota-harian/'
+                let url = app_url + '/kuota-harian'
                 let tanggal = $('#modalKuota').data('tanggal')
                 let kuota = $('#modalKuota input').val()
                 let sa_id = $('#modalKuota').data('sa-id')
                 let type = 'POST'
 
                 if (id != '') {
-                    url += id
+                    url += '/'+id
                     type = 'PUT'
                 }
 
@@ -580,7 +580,7 @@
 
                 let id = $(this).parent().parent().data('id')
                 $.ajax({
-                    url: window.location.origin + '/kuota-harian/' + id,
+                    url: app_url + '/kuota-harian/' + id,
                     type: 'delete',
                     success: function(response) {
 

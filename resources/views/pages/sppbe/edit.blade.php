@@ -146,8 +146,8 @@
                                                 {{ $message }}
                                             </div>
                                         @enderror
-                                        <div class="mt-1"><a
-                                                href="https://www.google.com/maps/@-7.5075599,109.2882293,14z"
+                                        <div class="mt-1"><a class="gmaps"
+                                                href="https://www.google.com/maps/search/{{ str_replace(' ', '', $sppbe->lat_lng) }}/{{ '@'.str_replace(' ', '', $sppbe->lat_lng) }},18z"
                                                 target="_blank">Buka Google Maps</a></div>
                                     </div>
                                 </div>
@@ -197,7 +197,7 @@
             }).addTo(map);
 
         var office = L.icon({
-            iconUrl: window.location.origin + '/img/building-solid.svg',
+            iconUrl: app_url + '/img/building-solid.svg',
             iconSize: [36, 36],
             iconAnchor: [36, 36],
             popupAnchor: [0, -36]
@@ -235,6 +235,11 @@
                 let new_lat_lng = marker.getLatLng().lat + ', ' + marker.getLatLng().lng;
                 $('input[name=lat_lng]').val(new_lat_lng)
                 map.panTo([lat, lng]);
+
+                let url =
+                    `https://www.google.com/maps/search/${new_lat_lng.replace(" ", "")}/@${new_lat_lng.replace(" ", "")},18z`
+                $('.gmaps').attr('href', url);
+
             }
         }
 
@@ -245,6 +250,11 @@
                     draggable: 'true'
                 }).bindPopup(new_lat_lng).update();
                 map.panTo(new_lat_lng);
+
+                let url =
+                    `https://www.google.com/maps/search/${new_lat_lng.replace(" ", "")}/@${new_lat_lng.replace(" ", "")},18z`
+                $('.gmaps').attr('href', url);
+
             }
 
         });

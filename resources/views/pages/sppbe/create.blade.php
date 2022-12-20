@@ -98,20 +98,7 @@
 
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group form-show-validation">
-                                        <label for="alamat" class="required">Alamat</label>
-                                        <input type="text" class="form-control @error('alamat') is-invalid @enderror"
-                                            id="alamat" name="alamat" placeholder="Masukkan alamat"
-                                            value="{{ old('alamat') }}" required>
-                                        @error('alamat')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
 
-                                    </div>
-                                </div>
                                 <div class="col-lg-6">
                                     <div class="form-group form-show-validation">
                                         <label for="no_hp" class="required">No. Telepon</label>
@@ -129,6 +116,22 @@
 
                                 <div class="col-lg-6">
                                     <div class="form-group form-show-validation">
+                                        <label for="alamat" class="required">Alamat</label>
+                                        <input type="text" class="form-control @error('alamat') is-invalid @enderror"
+                                            id="alamat" name="alamat" placeholder="Masukkan alamat"
+                                            value="{{ old('alamat') }}" required>
+                                        @error('alamat')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+
+                                    </div>
+                                </div>
+                              
+
+                                <div class="col-lg-6">
+                                    <div class="form-group form-show-validation">
                                         <label for="lat_lng" class="required">Koordinat</label>
                                         <input type="text" class="form-control @error('lat_lng') is-invalid @enderror"
                                             id="lat_lng" name="lat_lng" placeholder="-7.431391, 109.247833"
@@ -138,7 +141,7 @@
                                                 {{ $message }}
                                             </div>
                                         @enderror
-                                        <div class="mt-1"><a
+                                        <div class="mt-1"><a class="gmaps"
                                                 href="https://www.google.com/maps/@-7.5075599,109.2882293,14z"
                                                 target="_blank">Buka Google Maps</a></div>
                                     </div>
@@ -186,7 +189,7 @@
             }).addTo(map);
 
         var office = L.icon({
-            iconUrl: window.location.origin + '/img/building-solid.svg',
+            iconUrl: app_url + '/img/building-solid.svg',
             iconSize: [36, 36],
             iconAnchor: [36, 36],
             popupAnchor: [0, -36]
@@ -224,6 +227,10 @@
                 let new_lat_lng = marker.getLatLng().lat + ', ' + marker.getLatLng().lng;
                 $('input[name=lat_lng]').val(new_lat_lng)
                 map.panTo([lat, lng]);
+
+                let url =
+                    `https://www.google.com/maps/search/${new_lat_lng.replace(" ", "")}/@${new_lat_lng.replace(" ", "")},18z`
+                $('.gmaps').attr('href', url);
             }
         }
 
@@ -234,6 +241,10 @@
                     draggable: 'true'
                 }).bindPopup(new_lat_lng).update();
                 map.panTo(new_lat_lng);
+
+                let url =
+                    `https://www.google.com/maps/search/${new_lat_lng.replace(" ", "")}/@${new_lat_lng.replace(" ", "")},18z`
+                $('.gmaps').attr('href', url);
             }
 
         });
