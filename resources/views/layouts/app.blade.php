@@ -140,10 +140,10 @@
                 <!--
      Tip 1: You can change the background color of the logo header using: data-background-color="black | dark | blue | purple | light-blue | green | orange | red"
     -->
-                <a href="index.html" class="big-logo">
+                <a href="{{ route('dashboard') }}" class="big-logo">
                     <img src="{{ asset('img/logo-sal.png') }}" alt="logo img" class="logo-img">
                 </a>
-                <a href="index.html" class="logo">
+                <a href="{{ route('dashboard') }}" class="logo">
                     <img src="{{ asset('img/logoheader-sal.png') }}" alt="navbar brand" class="navbar-brand">
                 </a>
 
