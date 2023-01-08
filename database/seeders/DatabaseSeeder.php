@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Febri Sutomo',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('123'),
-            'role' => 'admin',
+            'role' => 'super admin',
             'phone' => fake()->e164PhoneNumber(),
         ]);
 
@@ -38,15 +38,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Dwi Yuliarto',
             'email' => 'manager@gmail.com',
             'phone' => fake()->e164PhoneNumber(),
-            'role' => 'manager',
-            'password' => Hash::make('123')
-        ]);
-
-        User::create([
-            'name' => 'Andi Sofyan',
-            'email' => 'pegawai@gmail.com',
-            'phone' => fake()->e164PhoneNumber(),
-            'role' => 'pegawai',
+            'role' => 'admin',
             'password' => Hash::make('123')
         ]);
 
@@ -167,8 +159,6 @@ class DatabaseSeeder extends Seeder
             'harga' => 14250,
             'nama_manager' => 'Dwi Yuliarto',
             'ttd_manager' => 'ttd-yuli.jpg',
-            'nama_perusahaan' => 'PT Serayu Agung Lestari',
-            'alamat' => 'Jl. Kulon No. 674 Sudagaran, Banyumas, Jawa Tengah 53192',
             'email' => 'ptserayuagunglestari@gmail.com',
             'telepon' => '0281796009'
         ]);

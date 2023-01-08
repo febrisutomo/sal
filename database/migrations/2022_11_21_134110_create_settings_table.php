@@ -17,8 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('nama_manager');
             $table->string('ttd_manager');
-            $table->string('nama_perusahaan');
-            $table->string('alamat');
             $table->string('email');
             $table->string('telepon');
             $table->integer('harga');

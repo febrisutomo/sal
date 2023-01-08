@@ -35,36 +35,7 @@
 
                         <div class="card-body">
                             <div class="row mb-3">
-                                <div class="col-lg-6">
-                                    <div class="form-group form-show-validation">
-                                        <label for="nama_perusahaan" class="required">Nama Perusahaan</label>
-                                        <input type="text"
-                                            class="form-control @error('nama_perusahaan') is-invalid @enderror"
-                                            id="nama_perusahaan" name="nama_perusahaan"
-                                            placeholder="Masukkan Nama Perusahaan"
-                                            value="{{ old('nama_perusahaan', $setting->nama_perusahaan) }}" required>
-                                        @error('nama_perusahaan')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group form-show-validation">
-                                        <label for="alamat" class="required">Alamat</label>
-                                        <input type="text" class="form-control @error('alamat') is-invalid @enderror"
-                                            id="alamat" name="alamat" placeholder="Masukkan Alamat"
-                                            value="{{ old('alamat', $setting->alamat) }}" required>
-                                        @error('alamat')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-
-                                    </div>
-                                </div>
+                               
                                 <div class="col-lg-6">
                                     <div class="form-group form-show-validation">
                                         <label for="email" class="required">Email</label>

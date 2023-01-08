@@ -1,5 +1,5 @@
 <div>
-    <table class="text-center"
+    {{-- <table class="text-center"
         style="width: 100%; padding-bottom: 4px; border-bottom: 4px double black; margin-bottom: 1rem">
         <tr>
             <td><img src="{{ asset('img/logo-sal.png') }}" height="90"></td>
@@ -12,7 +12,9 @@
             </td>
             <td><img src="{{ asset('img/logo-elpiji.png') }}" height="90"></td>
         </tr>
-    </table>
+    </table> --}}
+
+    <div style="margin-bottom: 1rem"><img src="{{ asset('img/kop-surat.jpg') }}" alt="" style="width: 100%"></div>
 
     <div class="text-center" style="margin-bottom: 2rem">
         <div class="text-uppercase font-weight-bold" style="text-decoration: underline">{{ $judul }}</div>
@@ -45,17 +47,17 @@
 
     <table>
         <tr>
-            <td style="vertical-align: bottom">
+            <td class="text-center" style="vertical-align: bottom">
                 <div>
-                    <img src="{{ asset('img/ttd-yuli.jpg') }}" width="150px">
+                    <img src="{{ asset('img/'.Setting::get()->ttd_manager) }}" height="90px">
                 </div>
                 <u class="text-uppercase">{{ Setting::get()->nama_manager }}</u><br>
                 <i>Manager</i>
             </td>
             <td style="width: 5rem"></td>
-            <td style="vertical-align: bottom">
+            <td class="text-center" style="vertical-align: bottom">
                 <div>
-                    <img src="{{ asset('img/sopir/' . $pengambilan->sopir->ttd) }}" width="150px">
+                    <img src="{{ asset('img/sopir/' . $pengambilan->sopir->ttd) }}" height="90px">
                 </div>
                 <u class="text-uppercase">{{ $pengambilan->sopir->nama }}</u><br>
                 <i>Sopir</i>

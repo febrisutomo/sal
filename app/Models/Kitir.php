@@ -28,4 +28,16 @@ class Kitir extends Model
         return $this->hasManyThrough(KuotaHarian::class, Sa::class);
     }
 
+    public function getTotalAttribute()
+    {
+        return $this->kuotaHarians->sum('kuota');
+    }
+
+    public function getHariKerjaAttribute()
+    {
+        return $this->kuotaHarians->groupBy('tanggal')->count();
+    }
+
+
+
 }

@@ -542,8 +542,8 @@
 
 
     <script>
-        const app_url = window.location.origin + "/sal-pro/public"
-        // const app_url = window.location.origin
+        // const app_url = window.location.origin + "/sal-pro/public"
+        const app_url = window.location.origin
 
         function rupiah(num) {
             return 'Rp ' + num.toLocaleString("id-ID", {

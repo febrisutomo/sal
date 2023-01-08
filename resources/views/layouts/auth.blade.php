@@ -20,7 +20,7 @@
 
     <link rel="stylesheet" href="{{ asset('plugins/sweetalert2/sweetalert2.min.css') }}">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <link rel="stylesheet" href="{{ asset('plugins/toastr/toastr.min.css') }}">
 
     
 
@@ -49,17 +49,16 @@
     <script src="{{ asset('js/core/bootstrap.min.js') }}"></script>
 
      <!-- jQuery UI -->
-     <script src="{{ asset('js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js') }}"></script>
-     <script src="{{ asset('js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js') }}"></script>
+     <script src="{{ asset('plugins/jquery-ui-1.12.1.custom/jquery-ui.min.js') }}"></script>
+     <script src="{{ asset('plugins/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js') }}"></script>
  
-
      <!-- jQuery Scrollbar -->
-     <script src="{{ asset('js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
+     <script src="{{ asset('plugins/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
 
     <!-- Sweet Alert -->
     <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="{{ asset('plugins/toastr/toastr.min.js') }}"></script>
 
     <!-- Ready Pro JS -->
     <script src="{{ asset('js/ready.min.js') }}"></script>

@@ -144,7 +144,7 @@
         <div>Agen PT. SERAYU AGUNG LESTARI</div>
         <div>Manager / Admin</div>
         <div>
-            <img src="{{ asset('img/ttd-yuli.jpg') }}" width="120px">
+            <img src="{{ asset('img/'.Setting::get()->ttd_manager) }}" height="85px">
         </div>
         <div><u class="text-uppercase">{{ Setting::get()->nama_manager }}</u></div>
     </div>

@@ -58,8 +58,8 @@
                                         <tr>
                                             <td class="text-center">{{ $loop->iteration }}</td>
                                             <td class="text-uppercase">{{ bulan($kitir->bulan_tahun) }}</td>
-                                            <td class="text-center number">{{ $kitir->kuotaHarians->sum('kuota') }}</td>
-                                            <td class="text-center">{{ $kitir->kuotaHarians->groupBy('tanggal')->count() }}
+                                            <td class="text-center number">{{ $kitir->total}}</td>
+                                            <td class="text-center">{{ $kitir->hari_kerja }}
                                             </td>
                                           
                                             <td class="text-center">

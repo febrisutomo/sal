@@ -34,8 +34,6 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         $validated = $request->validate([
-            'nama_perusahaan' => 'required',
-            'alamat' => 'required',
             'email' => 'required',
             'telepon' => 'required',
             'nama_manager' => 'required',
